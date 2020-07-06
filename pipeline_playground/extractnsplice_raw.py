@@ -59,19 +59,23 @@ def run_extract(filpaths, rawpaths, fieldnames, csvs):
 		end_times = [time_stamps[i]+time_widths[i] for i in np.arange(len(B_vals))]
 		#print(end_times)
 
-		for fil in files:
-			for B in np.arange(len(B_vals)):
-				for raw in np.arange(len(rawpaths)):
-					extract_run = 'python ' + 'extract_blocks.py ' + rawpaths[raw] + '' + 'blc' + str(fieldnames[raw][3:]) + '_' + fil[26:-25] + ' ' + str(start_times[B]) + ' ' + str(end_times[B]) + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground'
+		extract_run_commands = []
 
-					return extract_run, B_vals, rawpaths
+		for B in np.arange(len(B_vals)):
+			for raw in np.arange(len(rawpaths)):
+				extract_run = 'python ' + '../extractor/extract_blocks.py ' + rawpaths[raw] + '' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' ' + str(start_times[B]) + ' ' + str(end_times[B]) + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/rawfiles'
+				extract_run_commands.append(extract_run)
+
+
+	return extract_run_commands
 
 
 
 def main():
 
-	extract_run, B, raw = run_extract(filpaths, rawpaths, fieldnames, csvs)
-	os.system(extract_run)
+	extract_run_commands = run_extract(filpaths, rawpaths, fieldnames, csvs)
+	print(extract_run_commands)
+	#os.system(extract_run)
 
 main()
 
