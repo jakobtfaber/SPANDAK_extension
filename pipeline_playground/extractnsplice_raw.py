@@ -9,7 +9,6 @@ sys.path.insert(0, os.path.abspath('../extractor'))
 with open('database.csv', 'r') as infile:
 	reader = csv.DictReader(infile)
 	fieldnames = reader.fieldnames[1:]
-#print(fieldnames[0][3:])
 
 #Read in -tentative 'database'- .csv
 filepaths = pd.read_csv("database.csv")
@@ -50,14 +49,9 @@ def run_extract(filpaths, rawpaths, fieldnames, csvs):
 
 		for B in np.arange(len(B_vals)):
 			for raw in np.arange(len(rawpaths)):
-<<<<<<< HEAD
 				extract_run = 'python ' + '../extractor/extract_blocks.py ' + rawpaths[raw] \
-					 + '' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] \
-					+ ' ' + str(start_times[B]) + ' ' + str(end_times[B]) \
-					 + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/rawfiles'
-=======
-				extract_run = 'python ' + '../extractor/extract_blocks.py ' + rawpaths[raw] + '' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' ' + str(start_times[B]) + ' ' + str(end_times[B]) + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/rawfiles'
->>>>>>> 4d37f28a0b4c1857c4026fc90315b34f7f32804f
+				 + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' ' \
+				 + str(start_times[B]) + ' ' + str(end_times[B]) + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/rawfiles/'
 				extract_run_commands.append(extract_run)
 
 
@@ -68,14 +62,9 @@ def run_extract(filpaths, rawpaths, fieldnames, csvs):
 def main():
 
 	extract_run_commands = run_extract(filpaths, rawpaths, fieldnames, csvs)
-<<<<<<< HEAD
 
 	for erc in extract_run_commands:
 		os.system(erc)
-=======
-	print(extract_run_commands)
-	#os.system(extract_run)
->>>>>>> 4d37f28a0b4c1857c4026fc90315b34f7f32804f
 
 main()
 
