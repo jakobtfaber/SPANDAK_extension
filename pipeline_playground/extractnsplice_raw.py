@@ -18,7 +18,7 @@ rawpaths = filepaths.iloc[1, :][1:]
 csvs = []
 
 for csv in os.listdir("../pipeline_playground/"):
-	if csv.endswith("csv.csv"):
+	if csv.endswith("4chan.csv"):
 		csvs.append(csv)
 
 #print(csvs)
@@ -62,7 +62,10 @@ def run_extract(filpaths, rawpaths, fieldnames, csvs):
 		for fil in files:
 			for B in np.arange(len(B_vals)):
 				for raw in np.arange(len(rawpaths)):
-					extract_run = 'python ' + 'extract_blocks.py ' + rawpaths[raw] + '' + 'blc' + str(fieldnames[raw][3:]) + '_' + fil[26:-25] + ' ' + str(start_times[B]) + ' ' + str(end_times[B]) + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground'
+					extract_run = 'python ' + '../extractor/extract_blocks.py ' + rawpaths[raw] \
+					 + '' + 'blc' + str(fieldnames[raw][3:]) + fil[33:-25] \
+					+ ' ' + str(start_times[B]) + ' ' + str(end_times[B]) \
+					 + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground'
 
 					return extract_run, B_vals, rawpaths
 
