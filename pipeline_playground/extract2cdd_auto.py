@@ -77,37 +77,37 @@ def splice_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, 
 	splicer_run_commands = []
 
 	for B in np.arange(len(B_idx)):	
-		splicer_run = 'python ' + '../extractor/raw_splicer.py ' + '../pipeline_playground/rawfiles/' \
+		splicer_run = 'python ' + '../extractor/splicer_raw.py ' + 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/rawfiles/' \
 		+ str(start_times[B]) + '_' + str(end_times[B]) + '/ ' + '9 ' + 'spliced' +  files[0][33:-25]
 		splicer_run_commands.append(splicer_run)
 
 	return splicer_run_commands
 
-def cdd_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times):
-
-	#Specify CDD parameters
-
-	cepoch = 58178
-	output = files[0][57:-25]
-	polar = 4
-	phasebin = 32768
-	p = 0
-	chan = 3712
-	samples = 558 #number of MB
-
-	#Parse and Form Coherent Dispersion Commands
-
-	cdd_run_commands = []
-
-	for B in np.arange(len(B_idx)):
-		cdd_run = 'dspsr ' + '-T ' + str(time_widths[B]) + ' -c ' + str(time_widths[B]) \
-		+ ' -cepoch ' + str(cepoch) + ' -O ' + str(output) + '_' + str(start_times[B]) + '_' \
-		+ str(end_times[B]) + ' -D ' + str(DMs[B]) + ' -d ' + str(polar) + ' -b ' \
-		+ str(phasebin) + ' -K -F ' + str(chan) + ':D ' + '-p 0 ' + '-U ' + str(samples) \
-		+ ' ../pipeline_playground/rawfiles/' + str(start_times[B]) + '_' + str(end_times[B]) + ' spliced' +  files[0][33:-25]
-		cdd_run_commands.append(cdd_run)
-
-	return cdd_run_commands
+#def cdd_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times):
+#
+#	#Specify CDD parameters
+#
+#	cepoch = 58178
+#	output = files[0][57:-25]
+#	polar = 4
+#	phasebin = 32768
+#	p = 0
+#	chan = 3712
+#	samples = 558 #number of MB
+#
+#	#Parse and Form Coherent Dispersion Commands
+#
+#	cdd_run_commands = []
+#
+#	for B in np.arange(len(B_idx)):
+#		cdd_run = 'dspsr ' + '-T ' + str(time_widths[B]) + ' -c ' + str(time_widths[B]) \
+#		+ ' -cepoch ' + str(cepoch) + ' -O ' + str(output) + '_' + str(start_times[B]) + '_' \
+#		+ str(end_times[B]) + ' -D ' + str(DMs[B]) + ' -d ' + str(polar) + ' -b ' \
+#		+ str(phasebin) + ' -K -F ' + str(chan) + ':D ' + '-p 0 ' + '-U ' + str(samples) \
+#		+ ' ../pipeline_playground/rawfiles/' + str(start_times[B]) + '_' + str(end_times[B]) + ' spliced' +  files[0][33:-25]
+#		cdd_run_commands.append(cdd_run)
+#
+#	return cdd_run_commands
 
 
 
@@ -117,18 +117,18 @@ def main():
 	B_idx, files, DMs, time_widths, start_times, end_times = parse_spandak(csvs)
 	extract_run_commands = extract_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times)
 	splicer_run_commands = splice_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times)
-	cdd_run_commands = cdd_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times)
+	#cdd_run_commands = cdd_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times)
 
-	print(extract_run_commands[0])
+	#print(extract_run_commands[0])
 	#Extract Raw Voltages
 
-	#for erc in extract_run_commands:
-	#	os.system(erc)
+	for erc in extract_run_commands:
+		os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
-	#for src in splicer_run_commands:
-	#	os.system(src)
+	for src in splicer_run_commands:
+		os.system(src)
 	#
 	##Coherently Dedisperse Raw File With DSPSR
 #
