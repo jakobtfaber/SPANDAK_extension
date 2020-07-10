@@ -9,14 +9,14 @@ sys.path.insert(0, os.path.abspath('../extractor'))
 def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
-	filepaths = pd.read_csv("database.csv")
+	filepaths = pd.read_csv(database)
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
 	csvs = []
 
 	for csv in os.listdir("../pipeline_playground/"):
-		if csv.endswith("csv.csv"):
+		if csv.endswith("4chan.csv"):
 			csvs.append(csv)
 
 	return filepaths, filpaths, rawpaths, fieldnames, csvs
