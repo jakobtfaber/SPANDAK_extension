@@ -49,13 +49,21 @@ def parse_spandak(csvs):
 		parse_center = [[i for i in [j.split('_') for j in cands.iloc[:, :]['PNGFILE']]][b][2] for b in B_idx]
 		time_stamps = [np.float(m[:-3]) for m in parse_center]
 
-		#Time limits
-		start_times = [time_stamps[b]-time_widths[b] for b in np.arange(len(B_idx))]
-		end_times = [time_stamps[b]+time_widths[b] for b in np.arange(len(B_idx))]
+		#Calculate dispersion delay in s
+		band = [[i for i in cands.loc[:, :]['BANDWIDTH']][b] for b in B_idx]
+		tau_disp = []
+		for B in np.arange(len(B_idx)):	
+			tau_disp.append((4.149e+3) * DMs[B] * (band[B]**(-2)))
 
-		return B_idx, files, DMs, time_widths, start_times, end_times
+		#Time limits - widths adjusted to 3 * dispersion delay (i.e., tau_disp)
+		#start_times = [time_stamps[b]-time_widths[b] for b in np.arange(len(B_idx))]
+		start_times = [time_stamps[b]-(3 * tau_disp[b]) for b in np.arange(len(B_idx))]
+		#end_times = [time_stamps[b]+time_widths[b] for b in np.arange(len(B_idx))]
+		end_times = [time_stamps[b]+(3 * tau_disp[b]) for b in np.arange(len(B_idx))]
 
-def extract_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times):
+		return B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp
+
+def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 
 	#Parse and Form Raw Voltage Extraction Commands
 
@@ -73,7 +81,7 @@ def extract_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths,
 	return extract_run_commands
 
 
-def splice_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times):
+def splice_auto(B_idx, files, start_times, end_times):
 
 	#Parse and Form Raw File Splicing Commands
 
@@ -86,24 +94,25 @@ def splice_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, 
 
 	return splicer_run_commands
 
-def gen_par(sourcename, DMs):
+def gen_par(sourcename, B_idx, DMs):
 
-	gen_par = []
-
-	for B in np.aragne(len(B_idx)):
-		par_txt = 'PSR  ' + str([int(s) for s in sourcename.split() if s.isdigit]) + '\n' \
+	par_file = []
+	source_int = [str(sub.split('_')[1])[3:] for sub in sourcename]
+	#str([int(s) for s in source_int[B].split() if s.isdigit])
+	for B in np.arange(len(B_idx)):
+		par_txt = 'PSR  ' + str(source_int[B]) + '\n' \
 		+ 'RAJ  ' + '05:31:58.70' '\n' + 'DECJ  ' + '+33:08:52.5' + '\n' \
 		+ 'C The following is (1+v/c)*f_topo where f_topo is 1/(2048*dt)' + '\n' \
 		+ 'F0  ' + '47.680639719963075' + '\n' + 'DM  ' + str(DMs[B]) + '\n' + 'PEPOCH  ' \
 		+ '57962.373622685185186' + '\n' + 'CLOCK  ' + 'UNCORR'
-		gen_par.append(par_txt)
+		par_file.append(par_txt)
 		
-	return gen_par
+	return source_int, par_file
 
 
 
 
-def cdd_fits_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times, par_file):
+def cdd_fits_auto(B_idx, files, par_fil_paths):
 
 	#Specify CDD parameters
 
@@ -120,9 +129,9 @@ def cdd_fits_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths
 	cdd_run_commands = []
 
 	for B in np.arange(len(B_idx)):
-		cdd_run = 'dspsr ' + '-U ' + str(samples) + ' -F ' + str(chan) ':D ' \
+		cdd_run = 'dspsr ' + '-U ' + str(samples) + ' -F ' + str(chan) + ':D ' \
 		+ ' -K ' + ' -d ' + str(polar) + ' -b  ' + str(phasebin) + ' -E ' \
-		+ par_file + ' -s -a psrfits -e fits ' + ' spliced' +  files[0][33:-25]
+		+ par_fil_paths[B] + ' -s -a psrfits -e fits ' + ' spliced' +  files[0][33:-25]
 		cdd_run_commands.append(cdd_run)
 
 	return cdd_run_commands
@@ -132,31 +141,46 @@ def cdd_fits_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths
 def main():
 	
 	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data()
-	B_idx, files, DMs, time_widths, start_times, end_times = parse_spandak(csvs)
-	extract_run_commands = extract_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times)
-	splicer_run_commands = splice_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times)
-	cdd_run_commands = cdd_auto(filpaths, rawpaths, fieldnames, B_idx, files, DMs, time_widths, start_times, end_times, par_file)
-
+	B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp = parse_spandak(csvs)
+	extract_run_commands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
+	splicer_run_commands = splice_auto(B_idx, files, start_times, end_times)
+	source_int, par_file = gen_par(sourcename, B_idx, DMs)
+	
+	print('Par Files: ', par_file)
+	#print('Dispersion Delay: ', tau_disp)
+	#print('Start Time: ', start_times)
+	#print('End Time: ', end_times)
 	#print(extract_run_commands[0])
 	#Extract Raw Voltages
 
-	for erc in extract_run_commands:
-		os.system(erc)
+	#for erc in extract_run_commands:
+		#print('Extract Raw Commands: ', erc)
+		#os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
-	for src in splicer_run_commands:
-		os.system(src)
+	#for src in splicer_run_commands:
+	#	print('Splice Raw Commands :', src)
+		#os.system(src)
 
-	for par_txt in gen_par:
-		par_file = 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str([int(s) for s in sourcename.split() if s.isdigit]) + '.par'
-		par = open(r par_file, "w")
-		par.write(par_txt)
+	par_fil_paths = []
+	for B in np.arange(len(B_idx)):
+	#	par_file = 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int) + '_' + str(B_idx[B]) + '.par'
+		#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
+		par_fil_paths.append(par_fil)
+		par = open(par_fil, "w")
+		par.write(par_file[B])
+		#par.close()
+
+
+	cdd_run_commands = cdd_fits_auto(B_idx, files, par_fil_paths)
+
 	#
 	##Coherently Dedisperse Raw File With DSPSR
 #
 	for cdd in cdd_run_commands:
-		os.system(cdd)
+		print('Coherent Dedisp Commands: ', cdd)
+		#os.system(cdd)
 
 main()
 
