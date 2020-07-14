@@ -9,7 +9,7 @@ import os
 
 
 #fits_dir = os.fsencode('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playgroune/61.4627973333_67.0552026667_fits')
-directory = r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/61.4627973333_67.0552026667_fits'
+directory = r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground'#/FRB121102_fits/1703.15379733_1708.74620267_fits'
 def fits2numpy():
 	for fits in os.listdir(directory):
 		#print(fits)
@@ -19,6 +19,7 @@ def fits2numpy():
 			with open(npar, 'wb') as npar_file:		
 				#arch = psrchive.Archive_load('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/61.4627973333_67.0552026667_fits/pulse_120390656.fits')
 				arch = psrchive.Archive_load(directory + '/' + fits)
+				#os.system('psrplot -p F -jD' + directory + '/' + fits)
 				arch.dedisperse()
 				arch.remove_baseline()
 				arch.convert_state('Stokes')
