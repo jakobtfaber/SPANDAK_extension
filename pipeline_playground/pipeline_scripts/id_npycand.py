@@ -7,11 +7,11 @@ from scipy import stats
 import sys
 import os
 #sys.path.insert(0, os.path.abspath('../fits2npy_test_files'))
-f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
+f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/pipeline_scripts'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
 
 def id_cand(f2ndir=f2ndir):
     
-    npy_fils = [i for i in os.listdir(f2ndir) if i.endswith('fits.npy')][1:]
+    npy_fils = [i for i in os.listdir(f2ndir) if i.endswith('fits.npy')]#[1:]
 
     for fil in npy_fils:    
 
