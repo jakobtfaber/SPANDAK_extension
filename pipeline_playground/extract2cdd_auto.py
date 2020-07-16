@@ -6,19 +6,20 @@ import pandas as pd
 import csv
 sys.path.insert(0, os.path.abspath('../extractor'))
 
-def read_data(database="database_49905.csv"):
+def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
-	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs/"
 	filepaths = pd.read_csv(database)
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
-	csvs = []
+	csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
 
-	for csv in os.listdir(str(csv_dir)):
-		if csv.endswith("49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv"):
-			csvs.append(csv)
+	#for csv in os.listdir(str(csv_dir)):
+	#	if csv.endswith("49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv"):
+	#		csvs.append(csv)
 
 	return filepaths, filpaths, rawpaths, fieldnames, csvs
 

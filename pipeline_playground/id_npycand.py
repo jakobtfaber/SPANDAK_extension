@@ -5,9 +5,11 @@ from scipy import stats
 import sys
 import os
 #sys.path.insert(0, os.path.abspath('../fits2npy_test_files'))
+
+#Path to fits directory
 f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
 
-def id_cand(f2ndir=f2ndir):
+def id_cand(f2ndir=f2
     
     npy_fils = [i for i in os.listdir(f2ndir) if i.endswith('.npy')][1:]
 

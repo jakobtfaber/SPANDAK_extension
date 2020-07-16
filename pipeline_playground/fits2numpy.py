@@ -6,10 +6,10 @@ import pylab
 import sys
 import os
 
-
-
 #fits_dir = os.fsencode('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playgroune/61.4627973333_67.0552026667_fits')
+
 directory = r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/61.4627973333_67.0552026667_fits'
+
 def fits2numpy():
 	for fits in os.listdir(directory):
 		#print(fits)
