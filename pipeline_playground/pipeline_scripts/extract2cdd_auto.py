@@ -9,9 +9,10 @@ sys.path.insert(0, os.path.abspath('../extractor'))
 def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
-	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
-	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs/"
-	filepaths = pd.read_csv(database)
+
+	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
+
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
@@ -91,8 +92,8 @@ def splice_auto(B_idx, files, start_times, end_times):
 
 	for B in np.arange(len(B_idx)):	
 		splicer_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/splicer_raw.py ' \
-		+ 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
-		+ str(start_times[B]) + '_' + str(end_times[B]) + '_no7' '/ ' + '2 ' + 'spliced' +  files[0][33:-25]
+		+ '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+		+ str(start_times[B]) + '_' + str(end_times[B]) + '/ ' + '2 ' + 'spliced' +  files[0][33:-25]
 		splicer_run_commands.append(splicer_run)
 
 	return splicer_run_commands
@@ -113,7 +114,9 @@ def gen_par(sourcename, B_idx, DMs):
 	return source_int, par_file
 
 
-def cdd_fits_auto(B_idx, files, par_fil_paths):
+
+
+def cdd_fits_auto(B_idx, files, par_fil_paths, start_times, end_times):
 
 	#Specify CDD parameters
 
@@ -133,7 +136,7 @@ def cdd_fits_auto(B_idx, files, par_fil_paths):
 		cdd_run = 'dspsr ' + '-U ' + str(samples) + ' -F ' + str(chan) + ':D ' \
 		+ ' -K ' + ' -d ' + str(polar) + ' -b  ' + str(phasebin) + ' -E ' \
 		+ par_fil_paths[B] + ' -s -a psrfits -e fits ' + 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
-		+ str(start_times[B]) + '_' + str(end_times[B]) + '_no7/' + 'spliced' +  files[0][33:-25]
+		+ str(start_times[B]) + '_' + str(end_times[B]) + '/' + 'spliced' +  files[0][33:-25] + str(start_times[B]) + '_' + str(end_times[B]) + '.raw'
 		cdd_run_commands.append(cdd_run)
 
 	return cdd_run_commands
@@ -154,19 +157,19 @@ def main():
 	#print(extract_run_commands[0])
 	#Extract Raw Voltages
 
-	for erc in extract_run_commands:
-		print('Extract Raw Commands: ', erc)
-		#os.system(erc)
+	#for erc in extract_run_commands:
+	#	print('Extract Raw Commands: ', erc)
+	#	os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
-	for src in splicer_run_commands:
-		print('Splice Raw Commands :', src)
+	#for src in splicer_run_commands:
+		#print('Splice Raw Commands :', src)
 		#os.system(src)
 
 	par_fil_paths = []
 	for B in np.arange(len(B_idx)):
-		par_fil = 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
+		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
 		#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
 		par_fil_paths.append(par_fil)
 		par = open(par_fil, "w")
@@ -174,13 +177,11 @@ def main():
 		#par.close()
 
 
-	cdd_run_commands = cdd_fits_auto(B_idx, files, par_fil_paths)
+	cdd_run_commands = cdd_fits_auto(B_idx, files, par_fil_paths, start_times, end_times)
 
-	#
-	##Coherently Dedisperse Raw File With DSPSR
-#
-	for cdd in cdd_run_commands:
-		print('Coherent Dedisp Commands: ', cdd)
+	#Coherently Dedisperse
+	#for cdd in cdd_run_commands:
+		#print('Coherent Dedisp Commands: ', cdd)
 		#os.system(cdd)
 
 main()

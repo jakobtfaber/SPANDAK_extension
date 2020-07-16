@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import scipy.signal as ss
 from scipy import stats
@@ -7,11 +9,12 @@ import os
 #sys.path.insert(0, os.path.abspath('../fits2npy_test_files'))
 
 #Path to fits directory
-f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
+#f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
+f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/pipeline_scripts'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
 
 def id_cand(f2ndir=f2
     
-    npy_fils = [i for i in os.listdir(f2ndir) if i.endswith('.npy')][1:]
+    npy_fils = [i for i in os.listdir(f2ndir) if i.endswith('fits.npy')]#[1:]
 
     for fil in npy_fils:    
 
@@ -33,8 +36,6 @@ def id_cand(f2ndir=f2
         ts_sg_snr = 10 * np.log10(np.max(ts_sg) / np.min(ts_sg))
         print('SNR: ', ts_sg_snr)
 
-        plt.plot(ts_sg)
-
         #Signal search for peaks, and normalized peak prominence
         ar_pks = ss.find_peaks(ts_sg)
         #print('Peaks: ', ar_pks[0])
@@ -42,14 +43,25 @@ def id_cand(f2ndir=f2
         norm_pk_prom = ar_pk_prom / np.max(ar_pk_prom)
         peak_prom_snr = 10 * np.log10(np.max(norm_pk_prom) / np.min(norm_pk_prom))
         print('Prominence SNR: ', peak_prom_snr)
-        #print('Peak Prominences: ', norm_pk_prom)
+        plt.title('Time Series | Peak Prominence SNR: ' + str(peak_prom_snr))
+	plt.plot(ts_sg)
+	#print('Peak Prominences: ', norm_pk_prom)
 
 
         #Plot dynamic spectrum
-        #ar_corr = ss.correlate(ar_sb, ar_sb, mode = 'full')
-        ax2 = fig.add_subplot(122)
-        plt.imshow(ar_sb, aspect = 'auto')
-        plt.gca().invert_yaxis()
-        plt.show()
+        if ts_sg_snr > 10: 
+	#ar_corr = ss.correlate(ar_sb, ar_sb, mode = 'full')
+        	ax2 = fig.add_subplot(122)
+        	plt.title('Dynamic Spectrum | Candidate Detected! | SNR: ' + str(ts_sg_snr))
+		plt.imshow(ar_sb, aspect = 'auto')
+        	plt.gca().invert_yaxis()
+		plt.savefig(fil + '.png')
+		#plt.show()
+	else:
+		ax2 = fig.add_subplot(122)
+                plt.title('Dynamic Spectrum | No Candidate Found | SNR: ' + str(ts_sg_snr))
+                plt.imshow(ar_sb, aspect = 'auto')
+                plt.gca().invert_yaxis()
+                plt.savefig(fil + '.png')
 
 id_cand()

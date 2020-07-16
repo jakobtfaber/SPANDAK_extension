@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 #Read in -tentative 'database'- .csv
-filepaths = pd.read_csv("database_test.csv")
+filepaths = pd.read_csv("database.csv")
 
 filpaths = filepaths.iloc[:,0]
 
