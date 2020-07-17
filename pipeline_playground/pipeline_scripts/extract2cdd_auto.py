@@ -203,7 +203,7 @@ def main():
 	
 	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data()
 	B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp = parse_spandak(csvs)
-	extract_run_commands, sub_cands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
+	extract_run_commands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
 	splicer_run_commands = splice_auto(B_idx, files, start_times, end_times)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
@@ -216,9 +216,11 @@ def main():
 
 	#Extract Raw Voltages
 
-	for erc, sb in extract_run_commands:
-		#print('Extract Raw Commands: ', erc['all'])
-		os.system(extract_run_commands[erc][sb])
+	#for erc in extract_run_commands:
+	for k,v in extract_run_commands.items():
+		for erc in extract_run_commands[k]:
+			#print("Extract Run: ", erc)
+			os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
