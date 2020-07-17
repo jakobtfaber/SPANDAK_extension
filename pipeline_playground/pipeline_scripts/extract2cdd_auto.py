@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import fnmatch
 import sys
 import os
 import pandas as pd
@@ -10,13 +11,15 @@ def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
 
-	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
-	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
-
+	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
+	#filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
+	filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
-	csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
+	#csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
+	csvs = ['subband_test_121102.csv']
 
 	#for csv in os.listdir(str(csv_dir)):
 	#	if csv.endswith("49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv"):
@@ -70,18 +73,72 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 
 	#Parse and Form Raw Voltage Extraction Commands
 
-	extract_run_commands = []
+	extract_run_commands = {}
+	extract_run_commands['all'] = []
+	extract_run_commands['0'] = []
+	extract_run_commands['1'] = []
+	extract_run_commands['2'] = []
+	extract_run_commands['3'] = []
+
+	sub_cands = {}
+	sub_cands['cand_0'] = []
+	sub_cands['cand_1'] = []
+	sub_cands['cand_2'] = []
+	sub_cands['cand_3'] = []
 
 	for B in np.arange(len(B_idx)):
-		for raw in np.arange(len(rawpaths)):
-			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' + rawpaths[raw] \
-			 + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' ' \
-			 + str(start_times[B]) + ' ' + str(end_times[B]) \
-			 + ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
-			 + str(start_times[B]) + '_' + str(end_times[B])
-			extract_run_commands.append(extract_run)
+		if 'diced_0' in files[B]:
+			sub_cands['cand_0'].append(B)
+		elif 'diced_1' in files[B]:
+			sub_cands['cand_1'].append(B)
+		elif 'diced_2' in files[B]:
+			sub_cands['cand_2'].append(B)
+		elif 'diced_3' in files[B]:
+			sub_cands['cand_3'].append(B)
 
-	return extract_run_commands
+	for B in np.arange(len(B_idx)):
+		if 'diced_0' in files[B]:
+			for raw0 in np.arange(0, 7):
+				extract_run_0 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
+				+ rawpaths[raw0] + ' ' + 'blc' + str(fieldnames[raw0][3:]) + files[B][67:-25] + ' ' \
+				+ str(start_times[B]) + ' ' + str(end_times[B]) \
+				+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+				+ str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9'
+				extract_run_commands['0'].append(extract_run_0)
+		elif 'diced_1' in files[B]:
+			for raw1 in np.arange(7, 14):
+				extract_run_1 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
+				+ rawpaths[raw1] + ' ' + 'blc' + str(fieldnames[raw1][3:]) + files[B][67:-25] + ' ' \
+				+ str(start_times[B]) + ' ' + str(end_times[B]) \
+				+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+				+ str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7'
+				extract_run_commands['1'].append(extract_run_1)
+		elif 'diced_2' in files[B]:
+			for raw2 in np.arange(14, 21):
+				extract_run_2 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
+				+ rawpaths[raw2] + ' ' + 'blc' + str(fieldnames[raw2][3:]) + files[B][67:-25] + ' ' \
+				+ str(start_times[B]) + ' ' + str(end_times[B]) \
+				+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+				+ str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4'
+				extract_run_commands['2'].append(extract_run_2)
+		elif 'diced_3' in files[B]:
+			for raw3 in np.arange(21, 29):
+				extract_run_3 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
+				+ rawpaths[raw3] + ' ' + 'blc' + str(fieldnames[raw3][3:]) + files[B][67:-25] + ' ' \
+				+ str(start_times[B]) + ' ' + str(end_times[B]) \
+				+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+				+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1'
+				extract_run_commands['3'].append(extract_run_3)
+		else:
+			for raw in np.arange(len(rawpaths)):
+				extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
+				+ rawpaths[raw] + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' ' \
+				+ str(start_times[B]) + ' ' + str(end_times[B]) \
+				+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+				+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9'
+				extract_run_commands['all'].append(extract_run)
+
+	return extract_run_commands, sub_cands
 
 
 def splice_auto(B_idx, files, start_times, end_times):
@@ -146,7 +203,7 @@ def main():
 	
 	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data()
 	B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp = parse_spandak(csvs)
-	extract_run_commands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
+	extract_run_commands, sub_cands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
 	splicer_run_commands = splice_auto(B_idx, files, start_times, end_times)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
@@ -155,10 +212,14 @@ def main():
 	#print('Start Time: ', start_times)
 	#print('End Time: ', end_times)
 	#print(extract_run_commands[0])
+	#print("Raw Voltage Paths: ", rawpaths)
+
 	#Extract Raw Voltages
 
-	#for erc in extract_run_commands:
-	#	print('Extract Raw Commands: ', erc)
+	print(extract_run_commands['1'][1])
+
+	#for k,v in extract_run_commands:
+	#	print('Extract Raw Commands: ', erc['all'])
 	#	os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
@@ -167,17 +228,17 @@ def main():
 		#print('Splice Raw Commands :', src)
 		#os.system(src)
 
-	par_fil_paths = []
-	for B in np.arange(len(B_idx)):
-		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
-		#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
-		par_fil_paths.append(par_fil)
-		par = open(par_fil, "w")
-		par.write(par_file[B])
-		#par.close()
-
-
-	cdd_run_commands = cdd_fits_auto(B_idx, files, par_fil_paths, start_times, end_times)
+	#par_fil_paths = []
+	#for B in np.arange(len(B_idx)):
+	#	par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
+	#	#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
+	#	par_fil_paths.append(par_fil)
+	#	par = open(par_fil, "w")
+	#	par.write(par_file[B])
+	#	#par.close()
+#
+#
+	#cdd_run_commands = cdd_fits_auto(B_idx, files, par_fil_paths, start_times, end_times)
 
 	#Coherently Dedisperse
 	#for cdd in cdd_run_commands:
