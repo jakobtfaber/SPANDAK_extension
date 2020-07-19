@@ -116,7 +116,7 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
 			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
 			+ str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7/' + str(start_times[B]) + '_' + str(end_times[B])
-				extract_run_commands['1'].append(extract_run_1)
+			extract_run_commands['1'].append(extract_run_1)
 	for B in sub_cands['cand_2']:
 	#elif 'diced_2' in files[B]:
 		for raw2 in np.arange(14, 21):
@@ -125,7 +125,7 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
 			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
 			+ str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4/' + str(start_times[B]) + '_' + str(end_times[B])
-				extract_run_commands['2'].append(extract_run_2)
+			extract_run_commands['2'].append(extract_run_2)
 	for B in sub_cands['cand_3']:
 	#elif 'diced_3' in files[B]:
 		for raw3 in np.arange(21, 29):
