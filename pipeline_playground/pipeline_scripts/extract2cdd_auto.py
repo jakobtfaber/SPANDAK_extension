@@ -11,10 +11,10 @@ def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
 
-	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
-	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
-	#filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
-	filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
+	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	#csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
+	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
+	#filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
@@ -80,21 +80,21 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 	extract_run_commands['2'] = []
 	extract_run_commands['3'] = []
 
-	#sub_cands = {}
-	#sub_cands['cand_0'] = []
-	#sub_cands['cand_1'] = []
-	#sub_cands['cand_2'] = []
-	#sub_cands['cand_3'] = []
+	sub_cands = {}
+	sub_cands['cand_0'] = []
+	sub_cands['cand_1'] = []
+	sub_cands['cand_2'] = []
+	sub_cands['cand_3'] = []
 #
-	#for B in np.arange(len(B_idx)):
-	#	if 'diced_0' in files[B]:
-	#		sub_cands['cand_0'].append(B)
-	#	elif 'diced_1' in files[B]:
-	#		sub_cands['cand_1'].append(B)
-	#	elif 'diced_2' in files[B]:
-	#		sub_cands['cand_2'].append(B)
-	#	elif 'diced_3' in files[B]:
-	#		sub_cands['cand_3'].append(B)
+	for B in np.arange(len(B_idx)):
+		if 'diced_0' in files[B]:
+			sub_cands['cand_0'].append(B)
+		elif 'diced_1' in files[B]:
+			sub_cands['cand_1'].append(B)
+		elif 'diced_2' in files[B]:
+			sub_cands['cand_2'].append(B)
+		elif 'diced_3' in files[B]:
+			sub_cands['cand_3'].append(B)
 
 	for B in np.arange(len(B_idx)):
 		if 'diced_0' in files[B]:
@@ -215,12 +215,19 @@ def main():
 	#print("Raw Voltage Paths: ", rawpaths)
 
 	#Extract Raw Voltages
-
-	#for erc in extract_run_commands:
+#	for B in np.arange(len(B_idx)):	
+#		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9')
+#		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7')
+#		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
+#		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
+#		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
+	
+	#for erc in extract_run_commands:		
 	for k,v in extract_run_commands.items():
-		for erc in extract_run_commands[k]:
-			#print("Extract Run: ", erc)
-			os.system(erc)
+		print('Extract 1: ', extract_run_commands['1'])
+	#	for erc in extract_run_commands[k]:
+	#		print("Extract Run: ", erc)
+			#os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
