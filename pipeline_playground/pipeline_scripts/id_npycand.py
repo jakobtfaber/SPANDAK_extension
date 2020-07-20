@@ -12,7 +12,7 @@ import os
 #f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
 f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/pipeline_scripts'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
 
-def id_cand(f2ndir=f2
+def id_cand(f2ndir=f2ndir):
     
     npy_fils = [i for i in os.listdir(f2ndir) if i.endswith('fits.npy')]#[1:]
 

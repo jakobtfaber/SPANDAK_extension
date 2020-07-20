@@ -88,6 +88,7 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 	sub_cands['all'] = []
 #
 	for B in np.arange(len(B_idx)):
+		if 'diced_0' in files[B]:
 			sub_cands['cand_0'].append(B)
 		elif 'diced_1' in files[B]:
 			sub_cands['cand_1'].append(B)
@@ -103,45 +104,45 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 		#if 'diced_0' in files[B]:
 		for raw0 in np.arange(0, 7):
 			extract_run_0 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
-			+ rawpaths[raw0] + ' ' + 'blc' + str(fieldnames[raw0][3:]) + files[B][67:-25] + ' ' \
+			+ rawpaths[raw0] + ' ' + 'blc' + str(fieldnames[raw0][3:]) + files[B][75:-25] + ' ' \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
-			+ str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9/' + str(start_times[B]) + '_' + str(end_times[B])
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+			+ str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9/'
 			extract_run_commands['0'].append(extract_run_0)
 	for B in sub_cands['cand_1']:
 	#elif 'diced_1' in files[B]:
 		for raw1 in np.arange(7, 14):
 			extract_run_1 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
-			+ rawpaths[raw1] + ' ' + 'blc' + str(fieldnames[raw1][3:]) + files[B][67:-25] + ' ' \
+			+ rawpaths[raw1] + ' ' + 'blc' + str(fieldnames[raw1][3:]) + files[B][75:-25] + ' ' \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
-			+ str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7/' + str(start_times[B]) + '_' + str(end_times[B])
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+			+ str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7/'
 			extract_run_commands['1'].append(extract_run_1)
 	for B in sub_cands['cand_2']:
 	#elif 'diced_2' in files[B]:
 		for raw2 in np.arange(14, 21):
 			extract_run_2 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
-			+ rawpaths[raw2] + ' ' + 'blc' + str(fieldnames[raw2][3:]) + files[B][67:-25] + ' ' \
+			+ rawpaths[raw2] + ' ' + 'blc' + str(fieldnames[raw2][3:]) + files[B][75:-25] + ' ' \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
-			+ str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4/' + str(start_times[B]) + '_' + str(end_times[B])
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+			+ str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4/'
 			extract_run_commands['2'].append(extract_run_2)
 	for B in sub_cands['cand_3']:
 	#elif 'diced_3' in files[B]:
 		for raw3 in np.arange(21, 29):
 			extract_run_3 = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
-			+ rawpaths[raw3] + ' ' + 'blc' + str(fieldnames[raw3][3:]) + files[B][67:-25] + ' ' \
+			+ rawpaths[raw3] + ' ' + 'blc' + str(fieldnames[raw3][3:]) + files[B][75:-25] + ' ' \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
-			+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1/' + str(start_times[B]) + '_' + str(end_times[B])
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+			+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1/'
 			extract_run_commands['3'].append(extract_run_3)
 	for B in sub_cands['all']:
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
 			+ rawpaths[raw] + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' ' \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws_test/' \
-			+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/' + str(start_times[B]) + '_' + str(end_times[B])
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
+			+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
 			extract_run_commands['all'].append(extract_run)
 
 	return extract_run_commands
@@ -231,7 +232,7 @@ def main():
 	#for erc in extract_run_commands:		
 	for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
-		for erc in extract_run_commands[k]:
+		for erc in extract_run_commands['1']:
 			print("Extract Run: ", erc)
 			#os.system(erc)
 #
