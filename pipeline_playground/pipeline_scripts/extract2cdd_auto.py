@@ -214,6 +214,7 @@ def main():
 	splicer_run_commands = splice_auto(B_idx, files, start_times, end_times)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
+	print('Sub_cands', sub_cands)
 	#print('Par Files: ', par_file)
 	#print('Dispersion Delay: ', tau_disp)
 	#print('Start Time: ', start_times)
@@ -228,12 +229,12 @@ def main():
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-	
+
 	#for erc in extract_run_commands:		
-	for k,v in extract_run_commands.items():
-		#print('Extract 1: ', extract_run_commands['1'])
-		for erc in extract_run_commands['1']:
-			print("Extract Run: ", erc)
+	#for k,v in extract_run_commands.items():
+	#	#print('Extract 1: ', extract_run_commands['1'])
+#		for erc in extract_run_commands['1']:
+#			print("Extract Run: ", erc)
 			#os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
