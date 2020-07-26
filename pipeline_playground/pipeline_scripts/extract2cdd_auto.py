@@ -11,10 +11,10 @@ def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
 
-	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
-	#csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
-	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
-	#filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
+	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
+	#filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
+	filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
@@ -80,12 +80,22 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 	extract_run_commands['3'] = []
 	extract_run_commands['all'] = []
 
+	st_sorted = np.sort(start_times)
+	gaps = [y - x for x, y in zip(st_sorted[:-1], st_sorted[1:])]
+	sd = np.std(gaps)
+	group_starts = [[[start_times.index(st_sorted[0]), st_sorted[0]]]]
+	for t in st_sorted[1:]:
+		if (t - group_starts[-1][-1][-1]) > 0.2:
+			group_starts.append([])
+		group_starts[-1].append([start_times.index(t), t])
+
 	sub_cands = {}
 	sub_cands['cand_0'] = []
 	sub_cands['cand_1'] = []
 	sub_cands['cand_2'] = []
 	sub_cands['cand_3'] = []
 	sub_cands['all'] = []
+        
 #
 	for B in np.arange(len(B_idx)):
 		if 'diced_0' in files[B]:
@@ -99,6 +109,61 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 		else:
 			sub_cands['all'].append(B)
 
+	plot_bands = {}
+	plot_bands['3.8_5.1'] = []
+	plot_bands['3.8_6.4'] = []
+	plot_bands['3.8_7.7'] = []
+	plot_bands['5.3_6.4'] = []
+	plot_bands['5.3_7.7'] = []
+	plot_bands['5.3_9'] = []
+	plot_bands['6.6_7.7'] = []
+	plot_bands['6.6_9'] = []
+	plot_bands['7.9_9'] = []
+	plot_bands['3.8_9'] = []
+
+	for cgroup in group_starts:
+		if len(cgroup) == 3:
+			if cgroup[0][0] in sub_cands['all']:
+				plot_bands['3.8_9'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3'] and cgroup[1][0] in sub_cands['cand_2'] and cgroup[2][0] in sub_cands['cand_1']:
+				plot_bands['3.8_7.7'].append([[cgroup[0][0], cgroup[1][0], cgroup[2][0]], start_times[cgroup[2][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3'] and cgroup[1][0] in sub_cands['cand_2'] and cgroup[2][0] in sub_cands['cand_0']:
+				plot_bands['3.8_9'].append([[cgroup[0][0], cgroup[1][0], cgroup[2][0]], start_times[cgroup[2][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3'] and cgroup[1][0] in sub_cands['cand_1'] and cgroup[2][0] in sub_cands['cand_0']:
+				plot_bands['3.8_9'].append([[cgroup[0][0], cgroup[1][0], cgroup[2][0]], start_times[cgroup[2][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_2'] and cgroup[1][0] in sub_cands['cand_1'] and cgroup[2][0] in sub_cands['cand_0']:
+				plot_bands['5.3_9'].append([[cgroup[0][0], cgroup[1][0], cgroup[2][0]], start_times[cgroup[2][0]], end_times[cgroup[0][0]]])
+		if len(cgroup) == 2:
+			if cgroup[0][0] in sub_cands['all']:
+				plot_bands['3.8_9'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3'] and cgroup[1][0] in sub_cands['cand_2']:
+				plot_bands['3.8_6.4'].append([[cgroup[0][0], cgroup[1][0]], start_times[cgroup[1][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3'] and cgroup[1][0] in sub_cands['cand_1']:
+				plot_bands['3.8_7.7'].append([[cgroup[0][0], cgroup[1][0]], start_times[cgroup[1][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3'] and cgroup[1][0] in sub_cands['cand_0']:
+				plot_bands['3.8_9'].append([[cgroup[0][0], cgroup[1][0]], start_times[cgroup[1][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_2'] and cgroup[1][0] in sub_cands['cand_1']:
+				plot_bands['5.3_7.7'].append([[cgroup[0][0], cgroup[1][0]], start_times[cgroup[1][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_2'] and cgroup[1][0] in sub_cands['cand_0']:
+				plot_bands['5.3_9'].append([[cgroup[0][0], cgroup[1][0]], start_times[cgroup[1][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_1'] and cgroup[1][0] in sub_cands['cand_0']:
+				plot_bands['6.6_9'].append([[cgroup[0][0], cgroup[1][0]], start_times[cgroup[1][0]], end_times[cgroup[0][0]]])
+		else:
+			if cgroup[0][0] in sub_cands['all']:
+				plot_bands['3.8_9'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_3']:
+				plot_bands['3.8_5.1'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_2']:
+				plot_bands['5.3_6.4'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_1']:
+				plot_bands['6.6_7.7'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+			elif cgroup[0][0] in sub_cands['cand_0']:
+				plot_bands['7.9_9'].append([cgroup[0][0], start_times[cgroup[0][0]], end_times[cgroup[0][0]]])
+#
+
+
+            
+    
 	##for B in np.arange(len(B_idx)):
 	#for B in sub_cands['cand_0']:
 	#	#if 'diced_0' in files[B]:
@@ -145,7 +210,7 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times):
 			+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
 			extract_run_commands['all'].append(extract_run)
 
-	return extract_run_commands, sub_cands
+	return extract_run_commands, plot_bands
 
 
 def splice_auto(B_idx, files, start_times, end_times):
@@ -210,11 +275,12 @@ def main():
 	
 	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data()
 	B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp = parse_spandak(csvs)
-	extract_run_commands, sub_cands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
+	extract_run_commands, plot_bands = extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times)
 	splicer_run_commands = splice_auto(B_idx, files, start_times, end_times)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
-	print('Sub_cands', sub_cands)
+	print('Plot Bands', plot_bands)
+	#print('Start Times', start_times)
 	#print('Par Files: ', par_file)
 	#print('Dispersion Delay: ', tau_disp)
 	#print('Start Time: ', start_times)
