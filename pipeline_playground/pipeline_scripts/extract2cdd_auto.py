@@ -11,10 +11,10 @@ def read_data(database="database.csv"):
 	
 	#Read in -tentative 'database'- .csv
 
-	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
-	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
-	#filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
-	filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
+	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_csvs"
+	#csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
+	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
+	#filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]

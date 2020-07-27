@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 #Read in -tentative 'database'- .csv
-filepaths = pd.read_csv("database.csv")
+filepaths = pd.read_csv("../../database_r3.csv")
 
 filpaths = filepaths.iloc[:,0]
 
@@ -16,7 +16,7 @@ def run_spandak(filpaths, hidm=2000, lodm=100):
 	run_commands = []
 	
 	for fil in filpaths:
-		spandak_run = 'SPANDAK ' + '--fil ' + fil + ' --hidm ' + str(hidm) + ' --lodm ' + str(lodm) + ' --dorfi ' + '--logs=' + fil[26:-4] + '.csv'	
+		spandak_run = 'SPANDAK ' + '--fil ' + fil + ' --hidm ' + str(hidm) + ' --lodm ' + str(lodm) + '  --logs=' + fil[26:-4] + '.csv'	
 		run_commands.append(spandak_run)
 
 	return run_commands
