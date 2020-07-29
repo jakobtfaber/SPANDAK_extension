@@ -10,7 +10,7 @@ import os
 
 #Path to fits directory
 #f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
-f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/11D/11D_npys'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
+f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/11M/11M_npys'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
 
 def id_cand(f2ndir=f2ndir):
     
