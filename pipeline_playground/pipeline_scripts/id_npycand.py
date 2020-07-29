@@ -10,7 +10,7 @@ import os
 
 #Path to fits directory
 #f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
-f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/pipeline_scripts'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
+f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/11M/11M_npys'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
 
 def id_cand(f2ndir=f2ndir):
     
@@ -22,7 +22,7 @@ def id_cand(f2ndir=f2ndir):
         ar = np.load(f2ndir + '/' + fil)
 
         #Sub-band npy array
-        sub_factor = 256
+        sub_factor = 32
         ar_sb = np.nanmean(ar.reshape(-1, sub_factor, ar.shape[1]), axis=1)
 
         #Integrate to get absolute-valued and normalized timeseries and calculate 'snr'
