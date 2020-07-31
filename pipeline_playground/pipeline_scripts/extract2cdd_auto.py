@@ -7,19 +7,19 @@ import pandas as pd
 import csv
 sys.path.insert(0, os.path.abspath('../extractor'))
 
-def read_data(database="database_r3.csv"):
+def read_data(database="database_blp11_blp37.csv"):
 	
 	#Read in -tentative 'database'- .csv
 
-	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/R3_csvs"
+	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground"
 	#csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
 	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' + str(database))
 	#filepaths = pd.read_csv('/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/' + str(database))
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
-	#csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
-	csvs = ['AG_FRB180916_0003.rawspec.0001.csv']
+	csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
+	#csvs = ['AG_FRB180916_0003.rawspec.0001.csv']
 	
 	#for csv in os.listdir(str(csv_dir)):
 	#	if csv.endswith('.csv'):
@@ -206,10 +206,8 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, start_times, end_times, csv
 	for B in sub_cands['all']:
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
-			+ rawpaths[raw] + ' ' + 'blc7' + str(fieldnames[raw][4:]) + '_guppi_58932_24454_DIAG_FRB180916_' + str(csv[13:17]) \
-			+ ' '  + str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' \
-			+ str(csv[13:17]) + '/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
+			+ rawpaths[raw] + ' ' + 'blc7' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' '  + str(start_times[B]) + ' ' + str(end_times[B]) \
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
 			extract_run_commands.append(extract_run)
 
 	return extract_run_commands, plot_bands
@@ -309,8 +307,8 @@ def main():
 	#for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
 #		for erc in extract_run_commands['1']:
-		#print("Extract Run: ", erc)
-		os.system(erc)
+		print("Extract Run: ", erc)
+		#os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
