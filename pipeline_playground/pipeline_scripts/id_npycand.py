@@ -10,7 +10,7 @@ import os
 
 #Path to fits directory
 #f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
-f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/11A_PolFluxCal/npys/'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
+f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0005_raws/R3_639_npys'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
 
 def id_cand(f2ndir=f2ndir):
     
@@ -35,6 +35,7 @@ def id_cand(f2ndir=f2ndir):
         ts_sg = ss.savgol_filter(ar_ts, 115, 9)[100:1900]
         ts_sg_snr = 10 * np.log10(np.max(ts_sg) / np.min(ts_sg))
         print('SNR: ', ts_sg_snr)
+	print('Pulse File: ', fil)
 
         #Signal search for peaks, and normalized peak prominence
         ar_pks = ss.find_peaks(ts_sg)
@@ -55,13 +56,13 @@ def id_cand(f2ndir=f2ndir):
         	plt.title('Dynamic Spectrum | Candidate Detected! | SNR: ' + str(ts_sg_snr))
 		plt.imshow(ar_sb, aspect = 'auto')
         	plt.gca().invert_yaxis()
-		plt.savefig(fil + '.png')
+		plt.savefig(fil + '_' +  str(ts_sg_snr) + '.png')
 		#plt.show()
 	else:
 		ax2 = fig.add_subplot(122)
                 plt.title('Dynamic Spectrum | No Candidate Found | SNR: ' + str(ts_sg_snr))
                 plt.imshow(ar_sb, aspect = 'auto')
-                plt.gca().invert_yaxis()
-                plt.savefig(fil + '.png')
+                #plt.gca().invert_yaxis()
+                #plt.savefig(fil + '.png')
 
 id_cand()

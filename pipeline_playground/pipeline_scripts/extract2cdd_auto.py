@@ -19,7 +19,7 @@ def read_data(database="database_r3.csv"):
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
 	#csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
-	csvs = ['/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/AG_FRB180916_0003.rawspec.0001.csv']
+	csvs = ['/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/R3_csvs/AG_FRB180916_0005.rawspec.0001.csv']
 	#csvs = ['/Users/jakobfaber/Documents/research/breakthrough_listen/SPANDAK_extension/pipeline_playground/R3/csvs/AG_FRB180916_0003.rawspec.0001.csv']
 	
 	#for csv in os.listdir(str(csv_dir)):
@@ -61,7 +61,7 @@ def parse_spandak(csvs):
 		#band = 400
 		tau_disp = []
 		for B in np.arange(len(B_idx)):	
-			tau_disp.append((4.149e+3) * DMs[B] * ((band[B]*2)**(-2)))
+			tau_disp.append((4.149e+3) * DMs[B] * ((band[B]*4)**(-2)))
 
 		#Time limits - widths adjusted to 3 * dispersion delay (i.e., tau_disp)
 		#start_times = [time_stamps[b]-time_widths[b] for b in np.arange(len(B_idx))]
@@ -215,7 +215,7 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, start_times, end
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
 			+ rawpaths[raw] + ' ' + 'blc7' + str(fieldnames[raw][4:]) + filepaths.iloc[:,0][1][5:-22] + ' '  + str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0003_raws/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
 			extract_run_commands.append(extract_run)
 
 	return extract_run_commands, plot_bands
@@ -304,13 +304,14 @@ def main():
 	#print("Raw Voltage Paths: ", rawpaths)
 
 	#Extract Raw Voltages
-	#for B in np.arange(len(B_idx)):	
+	for B in np.arange(len(B_idx)):	
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
 		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(csv[13:17]) + '/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-
+		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0003_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
+	
 	for erc in extract_run_commands:		
 	#for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
