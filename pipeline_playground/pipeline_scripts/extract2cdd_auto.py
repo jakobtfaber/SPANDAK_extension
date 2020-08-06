@@ -19,7 +19,7 @@ def read_data(database="database_r3.csv"):
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
 	#csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
-	csvs = ['/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/R3_csvs/AG_FRB180916_0005.rawspec.0001.csv']
+	csvs = ['/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/csvs/24386_DIAG_FRB180916_0002.rawspec.0001.csv']
 	#csvs = ['/Users/jakobfaber/Documents/research/breakthrough_listen/SPANDAK_extension/pipeline_playground/R3/csvs/AG_FRB180916_0003.rawspec.0001.csv']
 	
 	#for csv in os.listdir(str(csv_dir)):
@@ -66,7 +66,7 @@ def parse_spandak(csvs):
 		#Time limits - widths adjusted to 3 * dispersion delay (i.e., tau_disp)
 		#start_times = [time_stamps[b]-time_widths[b] for b in np.arange(len(B_idx))]
 		#start_times = [time_stamps[b]-(2 * tau_disp[b]) for b in np.arange(len(B_idx))]
-		start_times = [time_stamps[b]-(tau_disp[b]) for b in np.arange(len(B_idx))]
+		start_times = [time_stamps[b]-(0.5*tau_disp[b]) for b in np.arange(len(B_idx))]
 		#end_times = [time_stamps[b]+time_widths[b] for b in np.arange(len(B_idx))]
 		#end_times = [time_stamps[b]+(2 * tau_disp[b]) for b in np.arange(len(B_idx))]
 		end_times = [time_stamps[b]+(tau_disp[b]) for b in np.arange(len(B_idx))]
@@ -214,9 +214,13 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, start_times, end
 	for B in sub_cands['all']:
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
-			+ rawpaths[raw] + ' ' + 'blc7' + str(fieldnames[raw][4:]) + filepaths.iloc[:,0][1][5:-22] + ' '  + str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0003_raws/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
-			extract_run_commands.append(extract_run)
+			+ rawpaths[raw] + ' ' + 'blc7' + str(fieldnames[raw][4:]) + '_guppi_58932_24386' + filepaths.iloc[:, 0][raw][23:-22] +  '_0002 '  + str(start_times[B]) + ' ' + str(end_times[B]) \
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0002/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
+                        extract_run_commands.append(extract_run)
+
+			#filepaths.iloc[:,0][raw][5:-22] + ' '  + str(start_times[B]) + ' ' + str(end_times[B]) \
+			#+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0005/' +  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
+			#extract_run_commands.append(extract_run)
 
 	return extract_run_commands, plot_bands
 
@@ -229,8 +233,8 @@ def splice_auto(B_idx, files, start_times, end_times):
 
 	for B in np.arange(len(B_idx)):	
 		splicer_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/splicer_raw.py ' \
-		+ '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' \
-		+ str(start_times[B]) + '_' + str(end_times[B]) + '/ ' + '2 ' + 'spliced' +  files[0][33:-25]
+		+ '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0002' \
+		+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/ ' + '2 ' + 'spliced' +  files[B][33:-25]
 		splicer_run_commands.append(splicer_run)
 
 	return splicer_run_commands
@@ -244,13 +248,11 @@ def gen_par(sourcename, B_idx, DMs):
 		par_txt = 'PSR  ' + str(source_int[B]) + '\n' \
 		+ 'RAJ  ' + '05:31:58.70' '\n' + 'DECJ  ' + '+33:08:52.5' + '\n' \
 		+ 'C The following is (1+v/c)*f_topo where f_topo is 1/(2048*dt)' + '\n' \
-		+ 'F0  ' + '47.680639719963075' + '\n' + 'DM  ' + str(DMs[B]) + '\n' + 'PEPOCH  ' \
+		+ 'F0  ' + '12' + '\n' + 'DM  ' + str(DMs[B]) + '\n' + 'PEPOCH  ' \
 		+ '57962.373622685185186' + '\n' + 'CLOCK  ' + 'UNCORR'
 		par_file.append(par_txt)
 		
 	return source_int, par_file
-
-
 
 
 def cdd_fits_auto(B_idx, files, par_fil_paths, start_times, end_times):
@@ -286,7 +288,8 @@ def main():
 	print('Filpaths ', filepaths.iloc[:,0][1])
 	B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp, csv = parse_spandak(csvs)
 	print('B Index ', B_idx)
-#	print('Tau ', tau_disp)
+	print('files ', files)
+	#print('Tau ', tau_disp)
 	#print('Start time ', start_times)
 	#print('End time ', end_times)
 
@@ -310,29 +313,30 @@ def main():
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
 		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(csv[13:17]) + '/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0003_raws/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
+		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0002/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
 	
 	for erc in extract_run_commands:		
 	#for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
 #		for erc in extract_run_commands['1']:
 		print("Extract Run: ", erc)
-		#os.system(erc)
+		os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
 	#for src in splicer_run_commands:
-		#print('Splice Raw Commands :', src)
-		#os.system(src)
+	#	print('Splice Raw Commands :', src)
+	#	os.system(src)
 
-	#par_fil_paths = []
-	#for B in np.arange(len(B_idx)):
-	#	par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
+	par_fil_paths = []
+	for B in np.arange(len(B_idx)):
+		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0002/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9.par'
 	#	#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
-	#	par_fil_paths.append(par_fil)
-	#	par = open(par_fil, "w")
-	#	par.write(par_file[B])
-	#	#par.close()
+		par_fil_paths.append(par_fil)
+		par = open(par_fil, "w")
+		par.write(par_file[B])
+		print('Par file written')
+		par.close()
 #
 #
 	#cdd_run_commands = cdd_fits_auto(B_idx, files, par_fil_paths, start_times, end_times)
@@ -343,12 +347,3 @@ def main():
 		#os.system(cdd)
 
 main()
-
-
-
-
-
-
-
-
-

@@ -10,7 +10,7 @@ import os
 
 #Path to fits directory
 #f2ndir = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/fits2npy_test_files'
-f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0005_raws/R3_639_npys'#/FRB121102_npy/1703.15379733_1708.74620267_npy'
+f2ndir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0002/16.384175488_20.223649024_3.8_9/npys'#FRB121102_npy/1703.15379733_1708.74620267_npy'
 
 def id_cand(f2ndir=f2ndir):
     
@@ -50,7 +50,7 @@ def id_cand(f2ndir=f2ndir):
 
 
         #Plot dynamic spectrum
-        if ts_sg_snr > 10: 
+        if ts_sg_snr: 
 	#ar_corr = ss.correlate(ar_sb, ar_sb, mode = 'full')
         	ax2 = fig.add_subplot(122)
         	plt.title('Dynamic Spectrum | Candidate Detected! | SNR: ' + str(ts_sg_snr))
