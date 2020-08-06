@@ -11,16 +11,16 @@ def read_data(database="database_r3.csv"):
 	
 	#Read in -tentative 'database'- .csv
 
-	csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/csvs"
-	#csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
-	filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(database))
-	#filepaths = pd.read_csv('/Users/jakobfaber/Documents/research/breakthrough_listen/SPANDAK_extension/pipeline_playground/R3/' + str(database))
+	#csv_dir = "/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/csvs"
+	csv_dir = "/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground"
+	#filepaths = pd.read_csv('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(database))
+	filepaths = pd.read_csv('/Users/jakobfaber/Documents/research/breakthrough_listen/SPANDAK_extension/pipeline_playground/R3/' + str(database))
 	filpaths = filepaths.iloc[:,0]
 	rawpaths = filepaths.iloc[1, :][1:]
 	fieldnames = filepaths.columns[1:]
 	#csvs = ['spliced_guppi_57991_49905_DIAG_FRB121102_0011.gpuspec.0001.8.4chan.csv']
-	csvs = ['/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/R3_csvs/AG_FRB180916_0005.rawspec.0001.csv']
-	#csvs = ['/Users/jakobfaber/Documents/research/breakthrough_listen/SPANDAK_extension/pipeline_playground/R3/csvs/AG_FRB180916_0003.rawspec.0001.csv']
+	#csvs = ['/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/R3_csvs/AG_FRB180916_0005.rawspec.0001.csv']
+	csvs = ['/Users/jakobfaber/Documents/research/breakthrough_listen/SPANDAK_extension/pipeline_playground/R3/csvs/AG_FRB180916_0003.rawspec.0001.csv']
 	
 	#for csv in os.listdir(str(csv_dir)):
 	#	if csv.endswith('.csv'):
@@ -284,8 +284,10 @@ def main():
 	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data()
 	#print('Filepaths', filepaths)
 	print('Filpaths ', filepaths.iloc[:,0][1])
+	print('Fils ', filpaths)
 	B_idx, files, DMs, sourcename, time_widths, start_times, end_times, tau_disp, csv = parse_spandak(csvs)
 	print('B Index ', B_idx)
+	print('Start times ', start_times)
 #	print('Tau ', tau_disp)
 	#print('Start time ', start_times)
 	#print('End time ', end_times)
