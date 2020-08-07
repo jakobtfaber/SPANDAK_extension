@@ -8,7 +8,7 @@ import os
 
 #fits_dir = os.fsencode('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playgroune/61.4627973333_67.0552026667_fits')
 
-directory = r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0005_raws/R3_579_fits'#/FRB121102_fits/1703.15379733_1708.74620267_fits'
+directory = r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0002/16.384175488_20.223649024_3.8_9/fits'#/FRB121102_fits/1703.15379733_1708.74620267_fits'
 def fits2numpy():
 	for fits in os.listdir(directory):
 		#print(fits)
