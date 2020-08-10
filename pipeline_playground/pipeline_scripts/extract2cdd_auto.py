@@ -405,13 +405,13 @@ if __name__ == "__main__":
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
 		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(csv[13:17]) + '/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
 		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-	print(extract_run_commands[0])
-	#for erc in extract_run_commands:		
+	#print(extract_run_commands[0])
+	for erc in extract_run_commands:		
 	#for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
 #		for erc in extract_run_commands['1']:
 		#print("Extraction Commands: ", erc)
-		#os.system(erc)
+		os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
