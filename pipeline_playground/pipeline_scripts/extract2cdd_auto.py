@@ -289,7 +289,7 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, \
 	return extract_run_commands, sub_cands, plot_bands
 
 
-def splice_auto(B_idx, files, start_times, end_times, ex_raws_path):
+def splice_auto(sub_cands, files, start_times, end_times, ex_raws_path):
 
 	#Parse and Form Raw File Splicing Commands
 
@@ -303,9 +303,11 @@ def splice_auto(B_idx, files, start_times, end_times, ex_raws_path):
 	#r
 
 
-	for B in np.arange(len(B_idx)):	
+	for B in sub_cands['all']:	
 		splicer_run = 'python ' + str(ex_raws_path) \
-		+ str(start_times[B]) + '_' + str(end_times[B]) + '/ ' + '2 ' + 'spliced' +  files[0][l:r]
+		+ str(start_times[B]) + '_' + str(end_times[B]) \
+		+ '/ ' + '2 ' + 'spliced' +  files[B][l:r] + '_' + str(start_times[B]) \
+		+ '_' + str(end_times[B]) + '.raw'
 		splicer_run_commands.append(splicer_run)
 
 	return splicer_run_commands
@@ -379,10 +381,10 @@ if __name__ == "__main__":
 #	print('Tau ', tau_disp)
 	#print('Start time ', start_times)
 	#print('End time ', end_times)
-	ex_raws_path = 'raws_path'
+	ex_raws_path = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/'
 	extract_run_commands, sub_cands, plot_bands = extract_auto(rawpaths, \
 		fieldnames, B_idx, files, filepaths, start_times, end_times, csv)
-	splicer_run_commands = splice_auto(B_idx, files, start_times, end_times, ex_raws_path)
+	splicer_run_commands = splice_auto(sub_cands, files, start_times, end_times, ex_raws_path)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
 	for b in sub_cands['all']:
@@ -398,14 +400,14 @@ if __name__ == "__main__":
 	#print("Raw Voltage Paths: ", rawpaths)
 
 	#Extract Raw Voltages
-	for B in sub_cands['all']:	
+	#for B in sub_cands['all']:	
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
 		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(csv[13:17]) + '/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-	print(extract_run_commands[0])
+		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
+	#print(extract_run_commands[0])
 	#for erc in extract_run_commands:		
 	#for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
@@ -415,8 +417,8 @@ if __name__ == "__main__":
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
-	#for src in splicer_run_commands:
-		#print('Splice Raw Commands :', src)
+	for src in splicer_run_commands:
+		print('Splice Raw Commands :', src)
 		#os.system(src)
 
 	#par_fil_paths = []
