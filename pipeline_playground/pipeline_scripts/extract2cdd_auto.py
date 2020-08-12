@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import csv
 sys.path.insert(0, os.path.abspath('../extractor'))
+import RM
 
 def read_data(database, csv):
 	
@@ -68,10 +69,9 @@ def parse_spandak(csvs):
 		#Calculate dispersion delay in s
 		band = [[i for i in cands.loc[:, :]['BANDWIDTH']][b] for b in \
 					B_idx]
-		#band = 400
 		tau_disp = []
 		for B in np.arange(len(B_idx)):	
-			tau_disp.append((4.149e+3) * DMs[B] * ((band[B]*4)**(-2)))
+			tau_disp.append((4.149e+3) * DMs[B] * ((band[B])**(-2)))
 
 		#Calculate start and end times for raw voltage extraction
 
@@ -367,6 +367,27 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 
 	return cdd_run_commands
 
+def polfluxcal(pulse_fits):
+	database = 'pac -wp . -u fits'
+	#os.system(database)
+	print('Database Command', database)
+	print('Database created')
+	fluxcal = 'fluxcal -i 15 -d database -c fluxcal.cfg'
+	#os.system(fluxcal)
+	print('Fluxcal Command', fluxcal)
+	print(Flux & Pol calibration initiated)
+	calib = 'pac -x -d database.txt ' + pulse_fits
+	#os.system(calib)
+	print('Calibration Command', calib)
+	print(Calibration complete)
+	return
+
+def rmfit(pulse_fits):
+	RM_fit_command = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/RMfit_curve.py ' + str(pulse_fits)[:-4] + '.calib'
+	#os.system(RM_fit_command)
+	print('RM_fit Command', RM_fit_command)
+	return
+
 if __name__ == "__main__":
 
 	database = sys.argv[1]
@@ -391,7 +412,7 @@ if __name__ == "__main__":
 	source_int, par_file = gen_par(sourcename, sub_cands, DMs)
 	
 	#for b in sub_cands['all']:
-	#	print(time_stamps[b])
+	#print(time_stamps[b])
 	#print('Sub cands', sub_cands)
 	#print('Plot Bands', plot_bands)
 	#print('Start Times', start_times)
@@ -437,21 +458,11 @@ if __name__ == "__main__":
 	cdd_run_commands = cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
 
 	#Coherently Dedisperse
-	for cdd in cdd_run_commands:
-		print('Coherent Dedisp Commands: ', cdd)
+	#for cdd in cdd_run_commands:
+	#	print('Coherent Dedisp Commands: ', cdd)
 		#os.system(cdd)
 
-	#database = 'pac -wp . -u fits'
-	#os.system(database)
-	#print('Database created')
-	#fluxcal = 'fluxcal -i 15 -d database -c fluxcal.cfg'
-	#os.system(fluxcal)
-	#print(Flux & Pol calibration initiated)
-	#calib = 'pac -x -d database.txt ' + pulse_fits
-	#os.system(calib)
-	#print(Calibration complete)
-
-
+	polfluxcal(pulse_fits)
 
 
 
