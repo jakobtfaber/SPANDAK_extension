@@ -311,7 +311,7 @@ def splice_auto(sub_cands, files, start_times, end_times, ex_raws_path):
 
 	return splicer_run_commands
 
-def gen_par(sourcename, sub_cands, DMs):
+def gen_par(sourcename, B_idx, DMs):
 
 	par_file = []
 	source_int = [str(sub.split('_')[1])[3:] for sub in sourcename]
@@ -322,7 +322,7 @@ def gen_par(sourcename, sub_cands, DMs):
 	#F0 = 12
 
 	#str([int(s) for s in source_int[B].split() if s.isdigit])
-	for B in sub_cands['all']:
+	for B in np.arange(len(B_idx)):
 		par_txt = 'PSR  ' + str(source_int[B]) + '\n' \
 		+ 'RAJ  ' + '05:31:58.70' '\n' + 'DECJ  ' + '+33:08:52.5' + '\n' \
 		+ 'C The following is (1+v/c)*f_topo where f_topo is 1/(2048*dt)' + '\n' \
@@ -345,7 +345,7 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 	polar = 4
 	phasebin = 2048
 	p = 0
-	chan = 7424
+	chan = 6080
 	samples = 1024 #number of MB
 
 	#121102
@@ -360,8 +360,8 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 		cdd_run = 'dspsr ' + '-U ' + str(samples) + ' -F ' + str(chan) + ':D ' \
 		+ ' -K ' + ' -d ' + str(polar) + ' -b  ' + str(phasebin) + ' -E ' \
 		+ par_fil_paths[B] + ' -s -a psrfits -e fits ' \
-		+ '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' \
-		+ str(start_times[B]) + '_' + str(end_times[B]) + '/' + 'spliced' \
+		+ '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' \
+		+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/raws/' + 'spliced' \
 		+  files[B][l:r] + str(start_times[B]) + '_' + str(end_times[B]) + '.raw'
 		cdd_run_commands.append(cdd_run)
 
@@ -388,7 +388,7 @@ if __name__ == "__main__":
 	extract_run_commands, sub_cands, plot_bands = extract_auto(rawpaths, \
 		fieldnames, B_idx, files, filepaths, start_times, end_times, csv)
 	splicer_run_commands = splice_auto(sub_cands, files, start_times, end_times, ex_raws_path)
-	source_int, par_file = gen_par(sourcename, sub_cands, DMs)
+	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
 	#for b in sub_cands['all']:
 	#	print(time_stamps[b])
@@ -426,20 +426,24 @@ if __name__ == "__main__":
 
 	par_fil_paths = []
 	for B in np.arange(len(B_idx)):
-		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + 'FRB_' + str(start_times[B]).split('.')[0] + '.par'
+		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/pars/' + 'FRB_' + str(start_times[B]).split('.')[0] + '.par'
 		#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
 		par_fil_paths.append(par_fil)
-	#	par = open(par_fil, "w")
-	#	par.write(par_file[B])
-	#	#par.close()
+		#par = open(par_fil, "w")
+		#par.write(par_file[B])
+		#par.close()
 	#print(par_fil_paths)
 #
 	cdd_run_commands = cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
 
 	#Coherently Dedisperse
 	for cdd in cdd_run_commands:
-		print('Coherent Dedisp Commands: ', cdd)
-		#os.system(cdd)
+		#os.system('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + cdd.split('/')[14] + '/fits/ ' + cdd)
+		#print('Coherent Dedisp Commands: ', cdd)
+		os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		print('DSPSR Output Funnelling Into: ' + os.getcwd())
+		os.system(cdd)
+		print('Coherent Dedispersion Complete')
 
 	#database = 'pac -wp . -u fits'
 	#os.system(database)
