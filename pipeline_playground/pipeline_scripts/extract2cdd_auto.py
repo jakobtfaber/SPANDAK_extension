@@ -6,7 +6,7 @@ import os
 import pandas as pd
 import csv
 sys.path.insert(0, os.path.abspath('../extractor'))
-import RM
+#import RM
 
 def read_data(database, csv):
 	
@@ -27,7 +27,7 @@ def read_data(database, csv):
 	return filepaths, filpaths, rawpaths, fieldnames, csvs
 
 
-def parse_spandak(csvs):
+def parse_spandak(csvs, sd_grade):
 
 	for csv in csvs:
 		
@@ -35,7 +35,10 @@ def parse_spandak(csvs):
 		cands = pd.read_csv(csv)
 
 		#Isolate B-valued candidates (probable if not using ML functionality)
-		B_idx_nofil = cands[cands.iloc[:, :]['Category']=='B'].index.values
+		B_idx_nofil = cands[cands.iloc[:, :]['Category']==str(sd_grade)].index.values
+
+		if len(B_idx_nofil) == 0:
+			sys.exit('Sorry No B Candidates Were Detected, Darn!')		
 
 		#Find DMs for B candidates
 		DMs_nofil = [[i for i in cands.loc[:, :]['DM']][b] for b in \
@@ -43,6 +46,9 @@ def parse_spandak(csvs):
 
 		#Find DM-thresholded B-valued candidates
 		B_idx = [B_idx_nofil[i] for i in np.arange(len(B_idx_nofil)) if 500 < DMs_nofil[i] < 700]
+
+		if len(B_idx) == 0:
+			sys.exit('B Candidates Were Detected, But Not Within The Right DM Range!')			
 
 		#Find DMs for DM-thresholded B-valued candidates
 		DMs = [[i for i in cands.loc[:, :]['DM']][b] for b in \
@@ -64,7 +70,9 @@ def parse_spandak(csvs):
 		#Find ime centers
 		parse_center = [[i for i in [j.split('_') for j in \
 		cands.iloc[:, :]['PNGFILE']]][b][2] for b in B_idx]
-		time_stamps = [np.float(m[:-3]) for m in parse_center]
+		filenumber = [i for i in cands.loc[:, :]['filename']][0][-27:-25]
+		print('File Number :', filenumber)
+		time_stamps = [(np.float(m[:-3]) + ((int(filenumber) - 11) * 1800)) for m in parse_center]
 
 		#Calculate dispersion delay in s
 		band = [[i for i in cands.loc[:, :]['BANDWIDTH']][b] for b in \
@@ -375,11 +383,11 @@ def polfluxcal(pulse_fits):
 	fluxcal = 'fluxcal -i 15 -d database -c fluxcal.cfg'
 	#os.system(fluxcal)
 	print('Fluxcal Command', fluxcal)
-	print(Flux & Pol calibration initiated)
+	print('Flux & Pol calibration initiated')
 	calib = 'pac -x -d database.txt ' + pulse_fits
 	#os.system(calib)
 	print('Calibration Command', calib)
-	print(Calibration complete)
+	print('Calibration complete')
 	return
 
 def rmfit(pulse_fits):
@@ -392,6 +400,7 @@ if __name__ == "__main__":
 
 	database = sys.argv[1]
 	csv = sys.argv[2]
+	
 	#database="database_r3.csv"
 	
 	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data(database, csv)
@@ -411,8 +420,8 @@ if __name__ == "__main__":
 	splicer_run_commands = splice_auto(sub_cands, files, start_times, end_times, ex_raws_path)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
-	#for b in sub_cands['all']:
-	#print(time_stamps[b])
+	for b in sub_cands['all']:
+		print(time_stamps[b])
 	#print('Sub cands', sub_cands)
 	#print('Plot Bands', plot_bands)
 	#print('Start Times', start_times)
@@ -458,21 +467,15 @@ if __name__ == "__main__":
 	cdd_run_commands = cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
 
 	#Coherently Dedisperse
-<<<<<<< HEAD
 	#for cdd in cdd_run_commands:
-	#	print('Coherent Dedisp Commands: ', cdd)
-		#os.system(cdd)
-=======
-	for cdd in cdd_run_commands:
 		#os.system('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + cdd.split('/')[14] + '/fits/ ' + cdd)
 		#print('Coherent Dedisp Commands: ', cdd)
-		os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
-		print('DSPSR Output Funnelling Into: ' + os.getcwd())
-		os.system(cdd)
-		print('Coherent Dedispersion Complete')
->>>>>>> 9db31b599ca47d78ff031142d6be748efe3237cd
+		#os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		#print('DSPSR Output Funnelling Into: ' + os.getcwd())
+		#os.system(cdd)
+		#print('Coherent Dedispersion Complete')
 
-	polfluxcal(pulse_fits)
+	#polfluxcal(pulse_fits)
 
 
 
