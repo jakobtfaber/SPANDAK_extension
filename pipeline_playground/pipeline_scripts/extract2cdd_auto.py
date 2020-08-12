@@ -5,6 +5,7 @@ import sys
 import os
 import pandas as pd
 import csv
+import itertools
 sys.path.insert(0, os.path.abspath('../extractor'))
 #import RM
 
@@ -35,22 +36,108 @@ def parse_spandak(csvs, sd_grade):
 		cands = pd.read_csv(csv)
 
 		#Isolate B-valued candidates (probable if not using ML functionality)
-		B_idx_nofil = cands[cands.iloc[:, :]['Category']==str(sd_grade)].index.values
+		B_idx_nosnrfil_nodmfil = cands[cands.iloc[:, :]['Category']==str(sd_grade)].index.values
 
-		if len(B_idx_nofil) == 0:
+		if len(B_idx_nosnrfil_nodmfil) == 0:
 			sys.exit('Sorry No B Candidates Were Detected, Darn!')		
 
 		#Find DMs for B candidates
-		DMs_nofil = [[i for i in cands.loc[:, :]['DM']][b] for b in \
-					B_idx_nofil]
+		DMs_nosnrfil_nodmfil = [[i for i in cands.loc[:, :]['DM']][b] for b in \
+					B_idx_nosnrfil_nodmfil]
 
 		#Find DM-thresholded B-valued candidates
-		B_idx = [B_idx_nofil[i] for i in np.arange(len(B_idx_nofil)) if 500 < DMs_nofil[i] < 700]
+		B_idx_nosnrfil = [B_idx_nosnrfil_nodmfil[i] for i in np.arange(len(B_idx_nosnrfil_nodmfil)) if 500 < DMs_nosnrfil_nodmfil[i] < 700]
 
-		if len(B_idx) == 0:
+		if len(B_idx_nosnrfil_nodmfil) == 0:
 			sys.exit('B Candidates Were Detected, But Not Within The Right DM Range!')			
 
 		#Find DMs for DM-thresholded B-valued candidates
+		DMs_nosnrfil = [[i for i in cands.loc[:, :]['DM']][b] for b in \
+					B_idx_nosnrfil]
+
+		SNRs = [i for i in cands.loc[:, :]['SNR']]
+		#print('SNRs: ', SNRs)
+
+		#Find time centers
+		parse_center_nosnrfil = [[i for i in [j.split('_') for j in \
+		cands.iloc[:, :]['PNGFILE']]][b][2] for b in B_idx_nosnrfil]
+		filenumber = [i for i in cands.loc[:, :]['filename']][0][-27:-25]
+		#print('File Number :', filenumber)
+		time_stamps_nosnrfil = [(np.float(m[:-3]) + ((int(filenumber) - 11) * 1800)) for m in parse_center_nosnrfil]
+		print('Time Stamps No SNR Fil:', time_stamps_nosnrfil)
+
+		def Delta(delta):
+		    last = None
+		    key = 1
+		    def keyfunc(value):
+		        nonlocal last, key
+		        if last is not None and abs(last - value) > delta:
+		            key += 1
+		        last = value
+		        return key
+		    return keyfunc
+
+		dup_times = []
+
+		for key, grp in itertools.groupby(np.sort(time_stamps_nosnrfil), key=Delta(0.02)):
+			dup_times.append(list(grp))
+
+		#print('Duplicate Times: ', dup_times)
+
+		for sublist in dup_times:
+			if len(sublist) > 1:
+				temp_SNRs = []
+				for i in sublist:
+					temp_SNRs.append(SNRs[np.where(time_stamps_nosnrfil == i)[0][0]])
+				max_snr = sublist[np.where(temp_SNRs == np.max(temp_SNRs))[0][0]]
+				dup_times.append([max_snr])
+				dup_times.remove(sublist)
+
+		print('Time', dup_times)
+
+		#dup_times_all = [item for sublist in dup_times for item in sublist]
+
+		#dup_bidxs_all = [np.where(time_stamps_nosnrfil == i)[0][0] for i in dup_times_all]
+		#def find_duplicates(array1, array2, B_idx_nosnrfil):
+		#    duplicate_tidxs = []
+		#    duplicate_bidxs = []
+		#    array1 = np.asarray(array1)
+		#    for value in array1:
+		#        array2 = np.asarray(array2)
+		#        ar1_ar2_diff = np.abs(array2 - value)
+		#        #print('AR diff ', ar1_ar2_diff)
+		#        for diff in ar1_ar2_diff:
+		#            if diff < 0.02 and (np.where(array1 == value)[0][0] \
+		#            	!= np.where(ar1_ar2_diff == diff)[0][0]):
+		#                duplicate_tidxs.append([np.where(array1 == value)[0][0], \
+		#                	np.where(ar1_ar2_diff == diff)[0][0]])
+		#                duplicate_bidxs.append([B_idx_nosnrfil[np.where(array1 == value)[0][0]], \
+		#                	B_idx_nosnrfil[np.where(ar1_ar2_diff == diff)[0][0]]])
+		#    #Duplicate idxs will have duplicate comparisons (i.e. [1, 14] and [14, 1] are counted), so take the first half
+		#    duplicate_tidxs = duplicate_tidxs[0:int(0.5 * len(duplicate_tidxs))]
+		#    duplicate_bidxs = duplicate_bidxs[0:int(0.5 * len(duplicate_bidxs))]
+		#    ar1_duplicate_times = [array1[val[0]] for val in duplicate_tidxs]
+		#    ar2_duplicate_times = [array2[val[1]] for val in duplicate_tidxs]
+		#    return ar1_duplicate_times, ar2_duplicate_times, duplicate_tidxs, duplicate_bidxs
+#
+		#ar1_dup, ar2_dup, dup_tidxs, dup_bidxs = find_duplicates(time_stamps_nosnrfil, time_stamps_nosnrfil, B_idx_nosnrfil)
+
+		B_idx = []
+
+		for dup in dup_times:
+			B_idx.append(B_idx_nosnrfil[np.where(dup[0] == time_stamps_nosnrfil)[0][0]])
+
+		print(str(sd_grade) + ' Indices: ', B_idx)
+
+		parse_center = [[i for i in [j.split('_') for j in \
+		cands.iloc[:, :]['PNGFILE']]][b][2] for b in B_idx]
+		filenumber = [i for i in cands.loc[:, :]['filename']][0][-27:-25]
+		#print('File Number :', filenumber)
+		time_stamps = [(np.float(m[:-3]) + ((int(filenumber) - 11) * 1800)) for m in parse_center]
+
+		#print('Time Stamps: ', time_stamps)
+
+		#Find DMs for SNR-thresholded B-valued candidates
 		DMs = [[i for i in cands.loc[:, :]['DM']][b] for b in \
 					B_idx]
 
@@ -66,13 +153,6 @@ def parse_spandak(csvs, sd_grade):
 		#Time widths
 		time_widths = [[i for i in cands.loc[:, :]['WIDTH']][b] for b in \
 						B_idx]
-
-		#Find time centers
-		parse_center = [[i for i in [j.split('_') for j in \
-		cands.iloc[:, :]['PNGFILE']]][b][2] for b in B_idx]
-		filenumber = [i for i in cands.loc[:, :]['filename']][0][-27:-25]
-		print('File Number :', filenumber)
-		time_stamps = [(np.float(m[:-3]) + ((int(filenumber) - 11) * 1800)) for m in parse_center]
 
 		#Calculate dispersion delay in s
 		band = [[i for i in cands.loc[:, :]['BANDWIDTH']][b] for b in \
@@ -132,19 +212,25 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, \
 	sub_cands['cand_2'] = []
 	sub_cands['cand_3'] = []
 	sub_cands['all'] = []
+	sub_cands['combined'] = []
         
 #
 	for B in np.arange(len(B_idx)):
 		if 'diced_0' in files[B]:
 			sub_cands['cand_0'].append(B)
+			sub_cands['combined'].append(B)
 		elif 'diced_1' in files[B]:
 			sub_cands['cand_1'].append(B)
+			sub_cands['combined'].append(B)
 		elif 'diced_2' in files[B]:
 			sub_cands['cand_2'].append(B)
+			sub_cands['combined'].append(B)
 		elif 'diced_3' in files[B]:
 			sub_cands['cand_3'].append(B)
+			sub_cands['combined'].append(B)
 		else:
 			sub_cands['all'].append(B)
+			sub_cands['combined'].append(B)
 
 	plot_bands = {}
 	plot_bands['3.8_5.1'] = []
@@ -275,7 +361,8 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, \
 	#		+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
 	#		+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1/'
 	#		extract_run_commands['3'].append(extract_run_3)
-	for B in sub_cands['all']:
+	#for B in sub_cands['all']:
+	for B in sub_cands['combined']:
 	#for B in np.arange(len(B_idx)):
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
@@ -311,7 +398,7 @@ def splice_auto(sub_cands, files, start_times, end_times, ex_raws_path):
 	#r
 	
 
-	for B in sub_cands['all']:	
+	for B in sub_cands['combined']:	
 		splicer_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/splicer_raw.py ' \
 		+  str(ex_raws_path) + str(start_times[B]) + '_' + str(end_times[B]) \
 		+ '_3.8_9/ ' + '2 ' + 'spliced' +  files[B][l:r] + str(start_times[B]) + '_' + str(end_times[B]) + '.raw'
@@ -364,7 +451,7 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 
 	cdd_run_commands = []
 
-	for B in sub_cands['all']:
+	for B in sub_cands['combined']:
 		cdd_run = 'dspsr ' + '-U ' + str(samples) + ' -F ' + str(chan) + ':D ' \
 		+ ' -K ' + ' -d ' + str(polar) + ' -b  ' + str(phasebin) + ' -E ' \
 		+ par_fil_paths[B] + ' -s -a psrfits -e fits ' \
@@ -421,8 +508,7 @@ if __name__ == "__main__":
 	splicer_run_commands = splice_auto(sub_cands, files, start_times, end_times, ex_raws_path)
 	source_int, par_file = gen_par(sourcename, B_idx, DMs)
 	
-	for b in sub_cands['all']:
-		print(time_stamps[b])
+	#print('Time Stamps: ', time_stamps)
 	#print('Sub cands', sub_cands)
 	#print('Plot Bands', plot_bands)
 	#print('Start Times', start_times)
@@ -475,8 +561,8 @@ if __name__ == "__main__":
 		#print('DSPSR Output Funnelling Into: ' + os.getcwd())
 		#os.system(cdd)
 		#print('Coherent Dedispersion Complete')
-
-	#polfluxcal(pulse_fits)
+	pulse_fits = 'pulse_fits'
+	polfluxcal(pulse_fits)
 
 
 
