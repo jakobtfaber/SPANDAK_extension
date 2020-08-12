@@ -67,7 +67,7 @@ def parse_spandak(csvs, sd_grade):
 		time_widths = [[i for i in cands.loc[:, :]['WIDTH']][b] for b in \
 						B_idx]
 
-		#Find ime centers
+		#Find time centers
 		parse_center = [[i for i in [j.split('_') for j in \
 		cands.iloc[:, :]['PNGFILE']]][b][2] for b in B_idx]
 		filenumber = [i for i in cands.loc[:, :]['filename']][0][-27:-25]
@@ -400,6 +400,7 @@ if __name__ == "__main__":
 
 	database = sys.argv[1]
 	csv = sys.argv[2]
+	sd_grade = sys.argv[3]
 	
 	#database="database_r3.csv"
 	
@@ -408,7 +409,7 @@ if __name__ == "__main__":
 	#print('Filpaths ', filepaths.iloc[:,0][1])
 	#print('Fils ', filpaths)
 	B_idx, files, DMs, sourcename, time_widths, time_stamps, start_times, end_times, \
-		tau_disp, csv = parse_spandak(csvs)
+		tau_disp, csv = parse_spandak(csvs, sd_grade)
 	#print('B Index ', B_idx)
 	#print('Start times ', start_times)
 #	print('Tau ', tau_disp)
