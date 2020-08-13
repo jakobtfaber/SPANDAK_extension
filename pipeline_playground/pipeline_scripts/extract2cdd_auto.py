@@ -463,6 +463,7 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 	return cdd_run_commands
 
 def polfluxcal(pulse_fits):
+	
 	database = 'pac -wp . -u fits'
 	#os.system(database)
 	print('Database Command', database)
@@ -561,6 +562,8 @@ if __name__ == "__main__":
 		#print('DSPSR Output Funnelling Into: ' + os.getcwd())
 		#os.system(cdd)
 		#print('Coherent Dedispersion Complete')
+	
+
 	pulse_fits = 'pulse_fits'
 	polfluxcal(pulse_fits)
 
