@@ -370,8 +370,8 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, \
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
 			+ rawpaths[raw] + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][33:-25] + ' '  \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' +  str(start_times[B]) + '_' \
-			+ str(end_times[B]) + '_3.8_9/'
+			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' +  str(start_times[B]) + '_' \
+			+ str(end_times[B]) + '_3.8_9/raws/'
 			extract_run_commands.append(extract_run)
 	
 	#for B in sub_cands['all']:
@@ -404,7 +404,7 @@ def splice_auto(sub_cands, files, start_times, end_times, ex_raws_path):
 	for B in sub_cands['all']:	
 		splicer_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/splicer_raw.py ' \
 		+  str(ex_raws_path) + str(start_times[B]) + '_' + str(end_times[B]) \
-		+ '_3.8_9/ ' + '2 ' + 'spliced' +  files[B][l:r] + str(start_times[B]) + '_' + str(end_times[B]) + '.raw'
+		+ '_3.8_9/raws ' + '2 ' + 'spliced' +  files[B][l:r] + str(start_times[B]) + '_' + str(end_times[B]) + '.raw'
 		splicer_run_commands.append(splicer_run)
 
 	return splicer_run_commands
@@ -507,7 +507,7 @@ if __name__ == "__main__":
 #	print('Tau ', tau_disp)
 	#print('Start time ', start_times)
 	#print('End time ', end_times)
-	ex_raws_path = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/'
+	ex_raws_path = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/'
 	extract_run_commands, sub_cands, plot_bands = extract_auto(rawpaths, \
 		fieldnames, B_idx, files, filepaths, start_times, end_times, csv)
 	splicer_run_commands = splice_auto(sub_cands, files, start_times, end_times, ex_raws_path)
@@ -531,29 +531,31 @@ if __name__ == "__main__":
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1')
 		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(csv[13:17]) + '/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
-		#os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9')
+		#raws_dir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9'
+		#if not os.path.exists(raws_dir):
+		#	os.mkdir(raws_dir)
 	#print(extract_run_commands[0])
-	#for erc in extract_run_commands:		
+	for erc in extract_run_commands:		
 	#for k,v in extract_run_commands.items():
 		#print('Extract 1: ', extract_run_commands['1'])
 #		for erc in extract_run_commands['1']:
-		#print("Extraction Commands: ", erc)
+		print("Extraction Commands: ", erc)
 		#os.system(erc)
 #
 	##Splice Raw Files Into Contiguous Raw File
 #
-	#for src in splicer_run_commands:
-	#	print('Splice Raw Commands :', src)
+	for src in splicer_run_commands:
+		print('Splice Raw Commands :', src)
 		#os.system(src)
 
 	par_fil_paths = []
 	for B in np.arange(len(B_idx)):
-		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/pars/' + 'FRB_' + str(start_times[B]).split('.')[0] + '.par'
+		par_fil = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/pars/' + 'FRB_' + str(time_stamps[B]).split('.')[0] + '.par'
 		#par_fil = '/Users/jakobfaber/Documents/spandak_extended/SPANDAK_extension/pipeline_playground/parfiles/' + 'FRB_' + str(source_int[B]) + '_' + str(B_idx[B]) + '.par'
 		par_fil_paths.append(par_fil)
-		#par = open(par_fil, "w")
-		#par.write(par_file[B])
-		#par.close()
+	#	par = open(par_fil, "w")
+	#	par.write(par_file[B])
+	#	par.close()
 	#print(par_fil_paths)
 #
 	cdd_run_commands = cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
@@ -562,13 +564,18 @@ if __name__ == "__main__":
 	for cdd in cdd_run_commands:
 		#os.system('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + cdd.split('/')[14] + '/fits/ ' + cdd)
 		#print('Coherent Dedisp Commands: ', cdd)
-		#os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]))
-		#os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
-		#os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		print('Coherent Dedispersion Complete')
+
+		time_dir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16])
+		fits_dir = '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits'
+		if not os.path.exists(time_dir):
+			os.mkdir(time_dir)
+		if not os.path.exists(fits_dir):
+			os.mkdir(fits_dir) 
+		#os.chdir(fits_dir)
 		#print('DSPSR Output Funnelling Into: ' + os.getcwd())
 		#os.system(cdd)
-		print(cdd)
-		print('Coherent Dedispersion Complete')
+		#print('Coherent Dedispersion Complete')
 	
 
 	#pulse_fits = 'pulse_fits'
