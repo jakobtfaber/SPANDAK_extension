@@ -170,7 +170,7 @@ def parse_spandak(csvs, sd_grade):
 						np.arange(len(B_idx))]
 		#end_times = [time_stamps[b]+time_widths[b] for b in np.arange(len(B_idx))]
 		#end_times = [time_stamps[b]+(2 * tau_disp[b]) for b in np.arange(len(B_idx))]
-		end_times = [time_stamps[b]+(50*tau_disp[b]) for b in \
+		end_times = [time_stamps[b]+(3*tau_disp[b]) for b in \
 					np.arange(len(B_idx))]
 
 		return B_idx, files, DMs, sourcename, time_widths, time_stamps, \
@@ -361,8 +361,8 @@ def extract_auto(rawpaths, fieldnames, B_idx, files, filepaths, \
 	#		+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/SPANDAK_121102_raws/' \
 	#		+ str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_5.1/'
 	#		extract_run_commands['3'].append(extract_run_3)
-	#for B in sub_cands['all']:
-	for B in sub_cands['combined']:
+	for B in sub_cands['all']:
+	#for B in sub_cands['combined']:
 	#for B in np.arange(len(B_idx)):
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/extract_blocks.py ' \
@@ -398,7 +398,8 @@ def splice_auto(sub_cands, files, start_times, end_times, ex_raws_path):
 	#r
 	
 
-	for B in sub_cands['combined']:	
+	#for B in sub_cands['combined']:
+	for B in sub_cands['all']:	
 		splicer_run = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/extractor/splicer_raw.py ' \
 		+  str(ex_raws_path) + str(start_times[B]) + '_' + str(end_times[B]) \
 		+ '_3.8_9/ ' + '2 ' + 'spliced' +  files[B][l:r] + str(start_times[B]) + '_' + str(end_times[B]) + '.raw'
@@ -440,7 +441,7 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 	polar = 4
 	phasebin = 2048
 	p = 0
-	chan = 6080
+	chan = 9728
 	samples = 1024 #number of MB
 
 	#121102
@@ -451,7 +452,8 @@ def cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times):
 
 	cdd_run_commands = []
 
-	for B in sub_cands['combined']:
+	#for B in sub_cands['combined']:
+	for B in sub_cands['all']:
 		cdd_run = 'dspsr ' + '-U ' + str(samples) + ' -F ' + str(chan) + ':D ' \
 		+ ' -K ' + ' -d ' + str(polar) + ' -b  ' + str(phasebin) + ' -E ' \
 		+ par_fil_paths[B] + ' -s -a psrfits -e fits ' \
@@ -521,7 +523,7 @@ if __name__ == "__main__":
 	#print("Raw Voltage Paths: ", rawpaths)
 
 	#Extract Raw Voltages
-	#for B in sub_cands['all']:	
+#	for B in sub_cands['all']:	
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_7.9_9')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_6.6_7.7')
 #		os.system('mkdir /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/' + str(start_times[B]) + '_' + str(end_times[B]) + '_5.3_6.4')
@@ -555,17 +557,19 @@ if __name__ == "__main__":
 	cdd_run_commands = cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
 
 	#Coherently Dedisperse
-	#for cdd in cdd_run_commands:
+	for cdd in cdd_run_commands:
 		#os.system('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + cdd.split('/')[14] + '/fits/ ' + cdd)
 		#print('Coherent Dedisp Commands: ', cdd)
-		#os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
-		#print('DSPSR Output Funnelling Into: ' + os.getcwd())
-		#os.system(cdd)
-		#print('Coherent Dedispersion Complete')
+		os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]))
+		os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		print('DSPSR Output Funnelling Into: ' + os.getcwd())
+		os.system(cdd)
+		print('Coherent Dedispersion Complete')
 	
 
-	pulse_fits = 'pulse_fits'
-	polfluxcal(pulse_fits)
+	#pulse_fits = 'pulse_fits'
+	#polfluxcal(pulse_fits)
 
 
 
