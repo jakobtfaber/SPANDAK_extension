@@ -66,16 +66,18 @@ def parse_spandak(csvs, sd_grade):
 		time_stamps_nosnrfil = [(np.float(m[:-3]) + ((int(filenumber) - 11) * 1800)) for m in parse_center_nosnrfil]
 		print('Time Stamps No SNR Fil:', time_stamps_nosnrfil)
 
-		def Delta(delta):
-		    last = None
-		    key = 1
-		    def keyfunc(value):
-		        nonlocal last, key
-		        if last is not None and abs(last - value) > delta:
-		            key += 1
-		        last = value
-		        return key
-		    return keyfunc
+		class Delta:
+			def __init__(self, delta):
+				self.last = None
+				self.delta = delta
+				self.key = 1
+			def __call__(self, value):
+				if self.last is not None and abs(self.last - value) > self.delta:
+					# Compare with the last value (`self.last`)
+					# If difference is larger than 20, advance to next project
+					self.key += 1
+				self.last = value  # Remeber the last value.
+				return self.key
 
 		dup_times = []
 
@@ -500,7 +502,7 @@ if __name__ == "__main__":
 	#print('Fils ', filpaths)
 	B_idx, files, DMs, sourcename, time_widths, time_stamps, start_times, end_times, \
 		tau_disp, csv = parse_spandak(csvs, sd_grade)
-	#print('B Index ', B_idx)
+	print('B Index ', B_idx)
 	#print('Start times ', start_times)
 #	print('Tau ', tau_disp)
 	#print('Start time ', start_times)
@@ -560,11 +562,12 @@ if __name__ == "__main__":
 	for cdd in cdd_run_commands:
 		#os.system('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/' + cdd.split('/')[14] + '/fits/ ' + cdd)
 		#print('Coherent Dedisp Commands: ', cdd)
-		os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]))
-		os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
-		os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
-		print('DSPSR Output Funnelling Into: ' + os.getcwd())
-		os.system(cdd)
+		#os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]))
+		#os.mkdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		#os.chdir(r'/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/' + str(cdd.split('/')[16]) + '/fits')
+		#print('DSPSR Output Funnelling Into: ' + os.getcwd())
+		#os.system(cdd)
+		print(cdd)
 		print('Coherent Dedispersion Complete')
 	
 
