@@ -1,6 +1,6 @@
 # SPANDAK+
 -----------------
-The full SPANDAK+ pipeline can be found in the SPANDAK+ directory.
+The main scripts used in the SPANDAK+ pipeline can be found in the SPANDAK+ directory.
 
 ![Flow Graph](spandak+.png)
 
