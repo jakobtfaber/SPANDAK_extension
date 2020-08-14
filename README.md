@@ -14,7 +14,7 @@ This first step of the pipeline requires three arguments:<br/>
 [2] path to csv for a single .fil from SPANDAK<br/>
 [3] desired grade given by SPANDAK (choose 'B' or 'C')<br/>
 
-First, raw voltages are extracted and place in directories specifying the start and end time of extraction, as well as the band across which they were extracted. This is done using the extract_blocks.py script written by Greg Hell (https://github.com/greghell/extractor). These directories are placed in a surrounding directory labeled 'bursts'. Next, the raw voltages are spliced together using the splicer_raw.py script, also written by Greg Hell (https://github.com/greghell/extractor). Finally, the spliced raw files are coherently dedispersed using DSPSR and place in 'fits' directories within each 'time_band' directory.
+First, raw voltages are extracted and place in directories specifying the start and end time of extraction, as well as the band across which they were extracted. This is done using the extract_blocks.py script written by Greg Hell, which can be found in the *extractor* directory. These directories are placed in a surrounding directory labeled 'bursts'. Next, the raw voltages are spliced together using the splicer_raw.py script, also written by Greg Hell and located in the *extractor* directory. Finally, the spliced raw files are coherently dedispersed using DSPSR and place in 'fits' directories within each 'time_band' directory.
 
 **Example Command:** python extract2cdd_auto.py /datax/scratch/jfaber/SPANDAK_extension/database.csv /datax/scratch/jfaber/SPANDAK_extension/57991_49905_DIAG_FRB121102_0011.csv B
 
