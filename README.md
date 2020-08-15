@@ -23,7 +23,7 @@ python extract2cdd_auto.py /datax/scratch/jfaber/SPANDAK_extension/database.csv 
 
 # [[2] Polfluxrm_auto.py](./polfluxrm_auto.py)
 -----------------
-Once step 1 is complete, the second step can be initiated, and requires two arguments:<br/>
+Once step 1 is complete, the second step can be initiated. This requires two arguments:<br/>
 [1] path to directory containing fits files<br/>
 [2] path to directory containing calibration files for the observation<br/>
 
