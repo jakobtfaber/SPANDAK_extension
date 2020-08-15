@@ -42,5 +42,7 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 [4] Instrumental Artifact Flagging<br/>
 [5] Fourier Spectrogram Analysis<br/>
 
-More on these utitlies can be found in: https://www.overleaf.com/read/knbhpqmgxnp
+# Overview Paper
+
+More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 which are in the process of publication can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
 
