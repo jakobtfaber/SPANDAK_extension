@@ -5,8 +5,9 @@ The main scripts used in the SPANDAK+ semi-automated pipeline can be found in th
 ![Flow Graph](spandak+.png)
 
 The SPANDAK+ is comprised of two components:
+> block
 
-# > [[1] Extract2cdd_auto.py](./extract2cdd_auto.py)
+# [[1] Extract2cdd_auto.py](./extract2cdd_auto.py)
 -----------------
 
 This first step of the pipeline requires three arguments:<br/>
@@ -21,7 +22,7 @@ First, raw voltages are extracted and place in directories specifying the start 
 python extract2cdd_auto.py /datax/scratch/jfaber/SPANDAK_extension/database.csv /datax/scratch/jfaber/SPANDAK_extension/57991_49905_DIAG_FRB121102_0011.csv B
 ```
 
-# > [[2] Polfluxrm_auto.py](./polfluxrm_auto.py)
+# [[2] Polfluxrm_auto.py](./polfluxrm_auto.py)
 -----------------
 Once step 1 is complete, the second step can be initiated, and requires two arguments:<br/>
 [1] path to directory containing fits files<br/>
