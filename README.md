@@ -5,7 +5,7 @@ The main scripts used in the SPANDAK+ semi-automated pipeline can be found in th
 ![Flow Graph](spandak+.png)
 
 The SPANDAK+ is comprised of two components:
->(block)
+>(block)<
 
 # [[1] Extract2cdd_auto.py](./extract2cdd_auto.py)
 -----------------
