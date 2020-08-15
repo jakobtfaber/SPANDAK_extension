@@ -27,7 +27,7 @@ Once step 1 is complete, the second step can be initiated. This requires two arg
 [1] path to directory containing fits files<br/>
 [2] path to directory containing calibration files for the observation<br/>
 
-Currently, step two is only run on individaul bursts—--this will be generalized in the future. The fits files are first converted to and stored as numpy arrays and pngs in case the pulse needs to be visually verified. The, using the calibration files, polarization and flux calibration are performed, followed by fitting of the rotation measure with the script RMfit_curve.py written by Vishal Gajjar. The RM fit results are output as a csv file '[pulse_id].calib.rmfit.csv', and the PA value, including error is printed in the terminal.
+Currently, step two is only run on individaul bursts—this will be generalized in the future. The fits files are first converted to and stored as numpy arrays and pngs in case the pulse needs to be visually verified. The, using the calibration files, polarization and flux calibration are performed, followed by fitting of the rotation measure with the script RMfit_curve.py written by Vishal Gajjar. The RM fit results are output as a csv file '[pulse_id].calib.rmfit.csv', and the PA value, including error is printed in the terminal.
 
 **Example Command** 
 ```
@@ -44,7 +44,7 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 
 # Overview Paper
 
-More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 (R3)--for which publications are in production--can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
+More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 (R3)—for which publications are in production—can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
 
 The final presentation for the Breakthrough Listen BSRC 2020 Summer Internship can be found [here](./Breakthrough_Listen_Final_Presentation.pdf).
 
