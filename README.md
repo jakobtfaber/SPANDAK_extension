@@ -44,7 +44,7 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 
 # Overview Paper
 
-More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 (R3) which are in the process of publication can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
+More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 (R3)--for which publications are in production--can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
 
 The final presentation for the Breakthrough Listen BSRC 2020 Summer Internship can be found [here](./Breakthrough_Listen_Final_Presentation.pdf).
 
