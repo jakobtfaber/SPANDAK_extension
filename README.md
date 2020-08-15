@@ -44,5 +44,5 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 
 # Overview Paper
 
-More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 which are in the process of publication can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
+More on the specifics of using SPANDAK+ and Intensity Analysis, as well as new results on FRB121102 (R1) and FRB180916 (R3) which are in the process of publication can be found in the following overview paper: https://www.overleaf.com/read/knbhpqmgxnp
 
