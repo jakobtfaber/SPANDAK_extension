@@ -40,7 +40,7 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 [2] Scattering Tail Analysis<br/>
 [3] Sub-burst and Centroid Identificaiton<br/>
 [4] Instrumental Artifact Flagging<br/>
-[5] Fourier Analysis<br/>
+[5] Fourier Spectrogram Analysis<br/>
 
 More on these utitlies can be found in:  
 
