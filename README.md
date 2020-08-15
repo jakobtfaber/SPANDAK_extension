@@ -5,7 +5,6 @@ The main scripts used in the SPANDAK+ semi-automated pipeline can be found in th
 ![Flow Graph](spandak+.png)
 
 The SPANDAK+ is comprised of two components:
-> - block
 
 # [[1] Extract2cdd_auto.py](./extract2cdd_auto.py)
 -----------------
@@ -43,5 +42,5 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 [4] Instrumental Artifact Flagging<br/>
 [5] Fourier Spectrogram Analysis<br/>
 
-More on these utitlies can be found in:  
+More on these utitlies can be found in: https://www.overleaf.com/read/knbhpqmgxnp
 
