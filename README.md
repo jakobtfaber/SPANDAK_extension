@@ -27,7 +27,7 @@ Once step 1 is complete, the second step can be initiated. This requires two arg
 [1] path to directory containing fits files<br/>
 [2] path to directory containing calibration files for the observation<br/>
 
-Currently, step two is only run on individaul bursts—this will be generalized in the future. The fits files are first converted to and stored as numpy arrays and pngs in case the pulse needs to be visually verified. The, using the calibration files, polarization and flux calibration are performed, followed by fitting of the rotation measure with the script RMfit_curve.py written by Vishal Gajjar. The RM fit results are output as a csv file '[pulse_id].calib.rmfit.csv', and the PA value, including error is printed in the terminal.
+Currently, step two is only run on individaul bursts—this will be generalized in the future. The fits files are first converted to and stored as both numpy arrays and pngs in case the pulse needs to be visually verified. Then using the calibration files, polarization and flux calibration are performed, followed by fitting of the rotation measure with the script RMfit_curve.py written by Vishal Gajjar. The RM fit results are output as a csv file '[pulse_id].calib.rmfit.csv', and the PA value, including error is printed in the terminal.
 
 **Example Command** 
 ```
