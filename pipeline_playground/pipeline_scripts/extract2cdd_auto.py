@@ -114,9 +114,6 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 		for dup in dup_times:
 			sd_idx.append(sd_idx_nosnrfil[np.where(dup[0] == toas_nosnrfil)[0][0]])
 
-		#Print candidate indices
-		print(str(sd_grade) + ' Indices: ', sd_idx)
-
 		#Identify parameters for fully filtered and unique candidates
 
 		parse_center = [[i for i in [j.split('_') for j in \
@@ -158,7 +155,6 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 		end_times = [toas[b]+(2*tau_disp[b]) for b in \
 					np.arange(len(sd_idx))]
 
-
 		#STAGE 4: MANUAL INTERVENTION IN CASE BURSTS ARE TOO WEAK
 
 		if intervene == True:
@@ -167,6 +163,12 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 			DMs = [646.1, 631.4, 636.6]
 			start_times = [26.2, 263.2, 277.16]	
 			end_times = [26.6, 263.6, 277.56]
+
+
+		#CHECK
+		#Print candidate indices
+		print(str(sd_grade) + ' Start Times: ', start_times)
+		print(str(sd_grade) + ' End Times: ', end_times)
 
 		return sd_idx, files, DMs, sourcename, time_widths, toas, \
 				start_times, end_times, tau_disp, csv
@@ -381,13 +383,15 @@ def _extract_auto(rawpaths, fieldnames, sd_idx, files, filepaths, \
 	#for B in np.arange(len(start_times)):										   #FOR MANUAL INTERVENTION
 		for raw in np.arange(len(rawpaths)):
 			extract_run = 'python ' + 'datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/extract_blocks.py ' \
-			#+ rawpaths[raw] + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][85:-25] + ' '  \   #121102
 			+ rawpaths[raw] + ' ' + 'blc7' + str(fieldnames[raw][4:]) + filepaths.iloc[:,0][1][5:-22] + ' ' \
 			+ str(start_times[B]) + ' ' + str(end_times[B]) \
-			#+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/      #121102
 			+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/R3/0003_raws/' \
 			+  str(start_times[B]) + '_' + str(end_times[B]) + '_3.8_9/'
 			extract_run_commands.append(extract_run)
+			#Substitute in when necessary
+			#+ rawpaths[raw] + ' ' + 'blc' + str(fieldnames[raw][3:]) + files[B][85:-25] + ' '  \   #121102
+			#+ ' /datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/FRB121102/bursts/      #121102
+
 
 	#IF EXTRACTING SUBBAND VOLTAGES: MAKES DIRECTORIES FOR EACH SUBBAND FOR STORING VOLTAGES
 
@@ -513,7 +517,7 @@ def _gen_par(sourcename, sd_idx, DMs, write_par=False):
 			par.write(par_file[B])
 			par.close()
 
-	return source_int, par_file
+	return source_int, par_file, par_fil_paths
 
 
 def _cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times, cdd=False):
@@ -570,23 +574,23 @@ if __name__ == "__main__":
 
 	#Define input arguments: database, SPANDAK csv, SPANDAK grade
 	database = sys.argv[1]
-	csv = sys.argv[2]
+	csvs = [sys.argv[2]]
 	sd_grade = sys.argv[3]
 	
 	#Read Database
-	filepaths, filpaths, rawpaths, fieldnames, csvs = read_data(database, csv)
+	filepaths, filpaths, rawpaths, fieldnames = _read_data(database)
 	#Identify Relevant Candidate Parameters
 	sd_idx, files, DMs, sourcename, time_widths, toas, start_times, end_times, \
-		tau_disp, csv = parse_spandak(csvs, sd_grade)
+		tau_disp, csv = _parse_spandak(csvs, sd_grade)
 	#Extract Raw Voltages
-	extract_run_commands, sub_cands, plot_bands = extract_auto(rawpaths, \
+	extract_run_commands, sub_cands, plot_bands = _extract_auto(rawpaths, \
 		fieldnames, sd_idx, files, filepaths, start_times, end_times, csv)
 	#Splice Raw Voltages
-	splicer_run_commands = splice_auto(sub_cands, files, start_times, end_times, ex_raws_path)
+	splicer_run_commands = _splice_auto(sub_cands, files, start_times, end_times)
 	#Generate Par Files
-	source_int, par_file = gen_par(sourcename, sd_idx, DMs)
+	source_int, par_file,par_fil_paths = _gen_par(sourcename, sd_idx, DMs)
 	#Coherently Dedisperse Spliced Raw Voltages
-	cdd_run_commands = cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
+	cdd_run_commands = _cdd_auto(sub_cands, files, par_fil_paths, start_times, end_times)
 
 
 
