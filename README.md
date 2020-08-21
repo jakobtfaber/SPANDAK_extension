@@ -39,7 +39,7 @@ This branch of the pipeline is geared towards analyzing intensity data using num
 [1] Structure-Maximizing DM Calculation (will soon be automated)<br/>
 [2] Drift Rate Calculation<br/>
 [2] Scattering Tail Analysis<br/>
-[3] Sub-burst and Centroid Identificaiton<br/>
+[3] Sub-burst and Centroid Identification<br/>
 [4] Instrumental Artifact Flagging<br/>
 [5] Fourier Spectrogram Analysis<br/>
 
