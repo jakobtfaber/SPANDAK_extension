@@ -6,6 +6,9 @@ import os
 import pandas as pd
 import csv
 import itertools
+
+os.system('source /home/vgajjar/spandakenv/bin/activate')
+
 sys.path.insert(0, os.path.abspath('../extractor'))
 
 def _read_data(database):
