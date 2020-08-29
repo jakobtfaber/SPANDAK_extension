@@ -1,8 +1,5 @@
-import sys
 import os
-
-os.system('source /home/vgajjar/spandakenv/bin/activate')
-
+import sys
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -13,19 +10,21 @@ import numpy as np
 import psrchive
 import pylab
 
+#Enter SPANDAK environment containg PSRCHIVE
+os.system('source /home/vgajjar/spandakenv/bin/activate')
+
 def fits2numpy(fitsdir):
+
+'''Convert fits files to numpy arrays'''
+
 	npydir = str(fitsdir) + '/npys'
 	if not os.path.exists(npydir):
 		os.mkdir(npydir)
 	os.chdir(npydir)
 	for fits in os.listdir(fitsdir):
-		#print(fits)
-		#npar = 'pulse_120390656' + '_secondtry.npy'
 		if fits.endswith('.fits'):
 			npar = str(fits) + '.npy'
 			with open(npar, 'wb') as npar_file:		
-				#arch = psrchive.Archive_load('/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/61.4627973333_67.0552026667_fits/pulse_120390656.fits')
-				#arch = psrchive.Archive_load(directory + '/' + fits)
 				arch = psrchive.Archive_load(fitsdir + '/' + fits)
 				#os.system('psrplot -p F -jD' + directory + '/' + fits)
 				arch.dedisperse()
@@ -40,8 +39,12 @@ def fits2numpy(fitsdir):
 
 def id_cand(npydir):
 
+'''Create smoohted .png's for candidates and identify candidate with highest SNR'''
+
+	#Locate numpy arrays
 	npy_fils = [i for i in os.listdir(npydir) if i.endswith('.npy')]#[1:]
 
+	#Make png directory
 	png_directory = str(npydir) + '/pngs'
 	if not os.path.exists(png_directory):	
 		os.mkdir(png_directory)
@@ -61,17 +64,16 @@ def id_cand(npydir):
 		sub_factor = 32
 		ar_sb = np.nanmean(ar.reshape(-1, sub_factor, ar.shape[1]), axis=1)
 
-		#Integrate to get absolute-valued and normalized timeseries to be able to calculate 'snr'
+		#Integrate to get abs and norm timeseries for SNR calculation
 		ar_ts = np.abs(ar_sb.sum(0) / np.max(ar_sb.sum(0)))
 
+		#Setup side by side waterfall and timeseries
 		fig = plt.figure(figsize = (20, 10))
 		ax1 = fig.add_subplot(121)
 
 		#Smooth timeseries with Savitzky Golay filter
 		ts_sg = ss.savgol_filter(ar_ts, 115, 9)[100:-100]
 		ts_sg_snr = 10 * np.log10(np.max(ts_sg) / np.mean(ts_sg))
-		#print('SNR: ', ts_sg_snr)
-		#print('Pulse File: ', fil)
 
 		#Signal search for peaks, and normalized peak prominence
 		ar_pks = ss.find_peaks(ts_sg)
@@ -85,8 +87,7 @@ def id_cand(npydir):
 		plt.plot(ts_sg)
 		#print('Peak Prominences: ', norm_pk_prom)
 
-
-		#Plot diagnostic dynamic spectrum
+		#Plot diagnostic waterfall
 		if ts_sg_snr > 5: 
 			ax2 = fig.add_subplot(122)
 			plt.title('Dynamic Spectrum | Candidate Likely | SNR: ' + str(ts_sg_snr))
@@ -109,6 +110,7 @@ def id_cand(npydir):
 
 def polfluxcal(pulse_fits, calib_file_path):
 	
+	#Create directory in which to copy and store calibration files
 	new_calibdir = str(fitsdir) + '/calib'
 	if not os.path.exists(new_calibdir):	
 		os.mkdir(new_calibdir)
@@ -116,17 +118,24 @@ def polfluxcal(pulse_fits, calib_file_path):
 	os.system('cp ' + str(calib_file_path) + '/* .')
 	os.system('cp ' + str(fitsdir) + '/' + str(pulse_fits) +  ' .')
 
+	#Generate database
 	database = 'pac -wp . -u fits'
 	os.system(database)
 	print('Database Command', database)
 	print('Database created')
+
+	#Run flux calibration
 	fluxcal = 'fluxcal -i 15 -d database.txt -c fluxcal.cfg'
 	os.system(fluxcal)
 	print('Fluxcal Command', fluxcal)
 	print('Flux & Pol calibration initiated')
+
+	#Adjust center frequency (if slightly offset)
 	cfreq_adjust = 'psredit -c "freq=6407.714800" -m ' + str(pulse_fits)
 	os.system(cfreq_adjust)
 	print('Center Frequency Adjusted to Exactly 6407.414800 MHz')
+
+	#Run 
 	calib = 'pac -x -d database.txt ' + str(pulse_fits)
 	os.system(calib)
 	print('Calibration Command', calib)
@@ -135,9 +144,13 @@ def polfluxcal(pulse_fits, calib_file_path):
 
 def rmfit(pulse_fits, new_calibdir):
 
+	#
 	os.chdir(new_calibdir)
 
-	RM_fit_command = 'python ' + '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/RMfit_curve.py ' + str(pulse_fits)[:-4] + '.calib'
+	RM_fit_command = 'python ' \
+	+ '/datax/scratch/jfaber/SPANDAK_extension/pipeline_playground/RMfit_curve.py ' \
+	+ str(pulse_fits)[:-4] + '.calib'
+	
 	os.system(RM_fit_command)
 	print('RM_fit Command', RM_fit_command)
 	return

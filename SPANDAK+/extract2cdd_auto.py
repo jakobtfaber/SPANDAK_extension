@@ -58,7 +58,7 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 			float(DM_min) < DMs_nosnrfil_nodmfil[i] < float(DM_max)]
 
 		#Exit if no bursts fall within desired dm range
-		if len(sd_idx_nosnrfil_nodmfil) == 0:
+		if len(sd_idx_nosnrfil) == 0:
 			sys.exit(str(sd_grade) + ' Candidates Were Detected, But Not Within The Right DM Range!')			
 
 		#Find DMs for DM-thresholded SPANDAK candidates
@@ -139,6 +139,16 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 		time_widths = [[i for i in cands.loc[:, :]['WIDTH']][b] for b in \
 						sd_idx]
 
+		#STAGE 4: MANUAL INTERVENTION IN CASE BURSTS ARE TOO WEAK
+
+		if intervene == True:
+
+			toas = [26.40, 263.40, 277.36]
+			DMs = [646.1, 631.4, 636.6]
+			#start_times = [26.2, 263.2, 277.16]	
+			#end_times = [26.6, 263.6, 277.56]
+
+
 		#Calculate dispersion delay in s for fully filtered unique candidates
 		band = [[i for i in cands.loc[:, :]['BANDWIDTH']][b] for b in \
 				sd_idx]
@@ -155,20 +165,13 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 		end_times = [toas[b]+(2*tau_disp[b]) for b in \
 					np.arange(len(sd_idx))]
 
-		#STAGE 4: MANUAL INTERVENTION IN CASE BURSTS ARE TOO WEAK
-
-		if intervene == True:
-
-			toas = [26.40, 263.40, 277.36]
-			DMs = [646.1, 631.4, 636.6]
-			start_times = [26.2, 263.2, 277.16]	
-			end_times = [26.6, 263.6, 277.56]
-
 
 		#CHECK
 		#Print candidate indices
-		print(str(sd_grade) + ' Start Times: ', start_times)
-		print(str(sd_grade) + ' End Times: ', end_times)
+		print(str(sd_grade) + ' TOAs: ', toas)
+		print(str(sd_grade) + ' DMs: ', DMs)
+		#print(str(sd_grade) + ' Start Times: ', start_times)
+		#print(str(sd_grade) + ' End Times: ', end_times)
 
 		return sd_idx, files, DMs, sourcename, time_widths, toas, \
 				start_times, end_times, tau_disp, csv
@@ -581,7 +584,7 @@ if __name__ == "__main__":
 	filepaths, filpaths, rawpaths, fieldnames = _read_data(database)
 	#Identify Relevant Candidate Parameters
 	sd_idx, files, DMs, sourcename, time_widths, toas, start_times, end_times, \
-		tau_disp, csv = _parse_spandak(csvs, sd_grade)
+		tau_disp, csv = _parse_spandak(csvs, sd_grade, DM_min=320, DM_max=380)
 	#Extract Raw Voltages
 	extract_run_commands, sub_cands, plot_bands = _extract_auto(rawpaths, \
 		fieldnames, sd_idx, files, filepaths, start_times, end_times, csv)
