@@ -6,6 +6,9 @@ import os
 import pandas as pd
 import csv
 import itertools
+
+os.system('source /home/vgajjar/spandakenv/bin/activate')
+
 sys.path.insert(0, os.path.abspath('../extractor'))
 
 def _read_data(database):
@@ -167,8 +170,9 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 
 		#CHECK
 		#Print candidate indices
-		print(str(sd_grade) + ' Start Times: ', start_times)
-		print(str(sd_grade) + ' End Times: ', end_times)
+		#print(str(sd_grade) + ' TOAs: ', toas)
+		#print(str(sd_grade) + ' Start Times: ', start_times)
+		#print(str(sd_grade) + ' End Times: ', end_times)
 
 		return sd_idx, files, DMs, sourcename, time_widths, toas, \
 				start_times, end_times, tau_disp, csv
@@ -581,7 +585,7 @@ if __name__ == "__main__":
 	filepaths, filpaths, rawpaths, fieldnames = _read_data(database)
 	#Identify Relevant Candidate Parameters
 	sd_idx, files, DMs, sourcename, time_widths, toas, start_times, end_times, \
-		tau_disp, csv = _parse_spandak(csvs, sd_grade)
+		tau_disp, csv = _parse_spandak(csvs, sd_grade, DM_min=340, DM_max=360)
 	#Extract Raw Voltages
 	extract_run_commands, sub_cands, plot_bands = _extract_auto(rawpaths, \
 		fieldnames, sd_idx, files, filepaths, start_times, end_times, csv)
