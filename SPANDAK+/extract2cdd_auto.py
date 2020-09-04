@@ -167,8 +167,9 @@ def _parse_spandak(csvs, sd_grade, DM_min=100, DM_max=2000, intervene=False):
 
 		#CHECK
 		#Print candidate indices
-		print(str(sd_grade) + ' Start Times: ', start_times)
-		print(str(sd_grade) + ' End Times: ', end_times)
+		print(str(sd_grade) + ' TOAs: ', np.sort(toas))
+		#print(str(sd_grade) + ' Start Times: ', start_times)
+		#print(str(sd_grade) + ' End Times: ', end_times)
 
 		return sd_idx, files, DMs, sourcename, time_widths, toas, \
 				start_times, end_times, tau_disp, csv
